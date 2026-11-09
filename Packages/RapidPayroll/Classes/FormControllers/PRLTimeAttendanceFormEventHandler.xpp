@@ -1,0 +1,8 @@
+public class PRLTimeAttendanceFormEventHandler
+{
+    [FormControlEventHandler(formControlStr(PRLTimeAttendanceForm, RollupAttendanceButton), FormControlEventType::Clicked)]
+    public static void RollupAttendanceButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLTimeAttendanceFormController::rollupToRun(sender.formRun());
+    }
+}

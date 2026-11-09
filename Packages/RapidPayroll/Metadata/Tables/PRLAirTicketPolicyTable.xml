@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLAirTicketPolicyTable">
+  <Label>Payroll air ticket policy</Label>
+  <PrimaryIndex>AirTicketPolicyIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="PolicyId" Type="String" StringSize="40" Mandatory="Yes" />
+    <Field Name="CountryRegionId" Type="String" StringSize="10" Mandatory="Yes" />
+    <Field Name="TicketClass" Type="String" StringSize="20" />
+    <Field Name="EligibilityMonths" Type="Integer" />
+    <Field Name="TicketAmount" Type="Real" />
+    <Field Name="IsActive" Type="Enum" EnumType="NoYes" />
+  </Fields>
+  <Indexes>
+    <Index Name="AirTicketPolicyIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="PolicyId" />
+    </Index>
+    <Index Name="AirTicketCountryIdx" AllowDuplicates="Yes">
+      <FieldRef Name="CountryRegionId" />
+    </Index>
+  </Indexes>
+</Table>

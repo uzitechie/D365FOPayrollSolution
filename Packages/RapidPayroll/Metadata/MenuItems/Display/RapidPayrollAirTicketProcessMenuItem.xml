@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DisplayMenuItem Name="RapidPayrollAirTicketProcessMenuItem">
+  <Label>Air ticket process</Label>
+  <ObjectType>Form</ObjectType>
+  <Object>PRLAirTicketProcessForm</Object>
+  <NeedsRecord>No</NeedsRecord>
+  <RunOn>Called from</RunOn>
+</DisplayMenuItem>

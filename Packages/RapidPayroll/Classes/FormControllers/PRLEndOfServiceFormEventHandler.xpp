@@ -1,0 +1,8 @@
+public class PRLEndOfServiceFormEventHandler
+{
+    [FormControlEventHandler(formControlStr(PRLEndOfServiceForm, GenerateEOSButton), FormControlEventType::Clicked)]
+    public static void GenerateEOSButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLEndOfServiceFormController::processRunSettlements(sender.formRun());
+    }
+}

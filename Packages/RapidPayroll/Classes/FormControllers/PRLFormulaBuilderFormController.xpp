@@ -1,0 +1,73 @@
+public class PRLFormulaBuilderFormController
+{
+    public static str functionCatalogText()
+    {
+        List functions = PRLFormulaBuilderService::getFunctionCatalog();
+        ListEnumerator le = functions.getEnumerator();
+        str catalog;
+        while (le.moveNext())
+        {
+            catalog += catalog ? "; " : "";
+            catalog += any2Str(le.current());
+        }
+        return catalog;
+    }
+
+    public static PRLFormulaDefinitionContract currentFormula(FormRun _formRun)
+    {
+        FormDataSource formulaDs = _formRun.dataSource(formDataSourceStr(PRLFormulaBuilderForm, PRLFormulaTable_DS));
+        PRLFormulaTable formulaTable = formulaDs.cursor();
+        PRLFormulaDefinitionContract contract = new PRLFormulaDefinitionContract();
+
+        contract.parmFormulaId(formulaTable.FormulaId);
+        contract.parmComponentCode(formulaTable.ComponentCode);
+        contract.parmExpression(formulaTable.Expression);
+        contract.parmCountryRegionId(formulaTable.CountryRegionId);
+        contract.parmLegalEntity(formulaTable.LegalEntity);
+        contract.parmIsExemptOnly(formulaTable.IsExemptOnly == NoYes::Yes);
+        contract.parmValidFrom(formulaTable.ValidFrom);
+        contract.parmValidTo(formulaTable.ValidTo);
+        contract.parmFormulaCurrency(formulaTable.FormulaCurrency);
+        return contract;
+    }
+
+    public static void validateCurrentFormula(FormRun _formRun)
+    {
+        PRLFormulaDefinitionContract formula = PRLFormulaBuilderFormController::currentFormula(_formRun);
+        PRLFormulaBuilderService::validateFormula(formula.parmExpression());
+        info(strFmt("Formula '%1' is valid.", formula.parmComponentCode()));
+    }
+
+    public static void previewCurrentFormula(FormRun _formRun)
+    {
+        PRLFormulaDefinitionContract formula = PRLFormulaBuilderFormController::currentFormula(_formRun);
+        PRLEmployeePayrollInputContract employee = new PRLEmployeePayrollInputContract();
+        real result;
+
+        employee.parmEmployeeId("PREVIEW");
+        employee.parmLegalEntity(formula.parmLegalEntity());
+        employee.parmCountryRegionId(formula.parmCountryRegionId());
+        employee.parmPayrollCurrency(formula.parmFormulaCurrency() ? formula.parmFormulaCurrency() : "USD");
+        employee.parmIsExempt(formula.parmIsExemptOnly());
+        employee.parmBasicSalary(10000);
+        employee.parmScheduledHours(160);
+        employee.parmOvertimeHours15(8);
+        employee.parmOvertimeHours20(4);
+        employee.parmLeaveHours(4);
+        employee.parmServiceYears(5);
+
+        result = PRLFormulaBuilderService::previewFormula(
+            formula.parmExpression(),
+            employee,
+            employee.parmPayrollCurrency());
+
+        info(strFmt("Formula preview result: %1", result));
+    }
+
+    public static void saveCurrentFormula(FormRun _formRun)
+    {
+        PRLFormulaDefinitionContract formula = PRLFormulaBuilderFormController::currentFormula(_formRun);
+        PRLFormulaBuilderService::saveFormula(formula);
+        info(strFmt("Formula '%1' has been saved.", formula.parmComponentCode()));
+    }
+}

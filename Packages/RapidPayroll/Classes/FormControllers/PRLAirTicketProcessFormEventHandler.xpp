@@ -1,0 +1,15 @@
+public class PRLAirTicketProcessFormEventHandler
+{
+    [FormControlEventHandler(formControlStr(PRLAirTicketProcessForm, SeedAirTicketPolicyButton), FormControlEventType::Clicked)]
+    public static void SeedAirTicketPolicyButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLAirTicketProcessFormController::seedPolicies();
+        sender.formRun().dataSource(formDataSourceStr(PRLAirTicketProcessForm, PRLAirTicketPolicyTable_DS)).research(true);
+    }
+
+    [FormControlEventHandler(formControlStr(PRLAirTicketProcessForm, GenerateAirTicketsByRunButton), FormControlEventType::Clicked)]
+    public static void GenerateAirTicketsByRunButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLAirTicketProcessFormController::processRun(sender.formRun());
+    }
+}

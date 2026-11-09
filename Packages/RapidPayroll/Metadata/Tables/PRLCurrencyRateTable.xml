@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLCurrencyRateTable">
+  <Label>Payroll currency rates</Label>
+  <PrimaryIndex>RateIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="RateId" Type="String" StringSize="60" Mandatory="Yes" />
+    <Field Name="FromCurrency" Type="String" StringSize="3" Mandatory="Yes" />
+    <Field Name="ToCurrency" Type="String" StringSize="3" Mandatory="Yes" />
+    <Field Name="ExchangeRate" Type="Real" Mandatory="Yes" />
+    <Field Name="ValidFrom" Type="Date" />
+    <Field Name="ValidTo" Type="Date" />
+  </Fields>
+  <Indexes>
+    <Index Name="RateIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="RateId" />
+    </Index>
+    <Index Name="PairLookupIdx" AllowDuplicates="Yes">
+      <FieldRef Name="FromCurrency" />
+      <FieldRef Name="ToCurrency" />
+      <FieldRef Name="ValidFrom" />
+    </Index>
+  </Indexes>
+</Table>

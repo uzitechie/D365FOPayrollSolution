@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Name="PRLPayElementsForm">
+  <Caption>Pay elements</Caption>
+  <DataSources>
+    <DataSource Name="PRLPayComponentTable_DS" Table="PRLPayComponentTable" />
+    <DataSource Name="PRLFormulaTable_DS" Table="PRLFormulaTable" JoinSource="PRLPayComponentTable_DS" LinkType="Delayed" />
+    <DataSource Name="PRLExpressionTable_DS" Table="PRLExpressionTable" JoinSource="PRLFormulaTable_DS" LinkType="Delayed" />
+    <DataSource Name="PRLPayElementEmployeeTable_DS" Table="PRLPayElementEmployeeTable" JoinSource="PRLPayComponentTable_DS" LinkType="Delayed" />
+  </DataSources>
+  <Design>
+    <Control Type="ActionPane" Name="ActionPane">
+      <Control Type="Button" Name="RefreshPayElementLinksButton" Text="Refresh links" />
+    </Control>
+    <Control Type="Tab" Name="MainTab">
+      <Control Type="TabPage" Name="PayElementsTab" Text="Pay elements">
+        <Control Type="Grid" Name="PayElementsGrid" DataSource="PRLPayComponentTable_DS">
+          <Control Type="String" DataField="ComponentCode" />
+          <Control Type="String" DataField="Description" />
+          <Control Type="String" DataField="ComponentType" />
+          <Control Type="String" DataField="FormulaId" />
+          <Control Type="Real" DataField="DefaultValue" />
+          <Control Type="Enum" DataField="IsActive" />
+        </Control>
+      </Control>
+      <Control Type="TabPage" Name="FormulasTab" Text="Formulas">
+        <Control Type="Grid" Name="FormulaGrid" DataSource="PRLFormulaTable_DS">
+          <Control Type="String" DataField="FormulaId" />
+          <Control Type="String" DataField="ComponentCode" />
+          <Control Type="String" DataField="Expression" />
+          <Control Type="String" DataField="CountryRegionId" />
+          <Control Type="String" DataField="LegalEntity" />
+          <Control Type="Enum" DataField="IsExemptOnly" />
+        </Control>
+      </Control>
+      <Control Type="TabPage" Name="ExpressionsTab" Text="Expressions">
+        <Control Type="Grid" Name="ExpressionGrid" DataSource="PRLExpressionTable_DS">
+          <Control Type="String" DataField="ExpressionId" />
+          <Control Type="String" DataField="FormulaId" />
+          <Control Type="String" DataField="ExpressionCode" />
+          <Control Type="Integer" DataField="SequenceNo" />
+          <Control Type="String" DataField="ExpressionText" />
+          <Control Type="Enum" DataField="IsActive" />
+        </Control>
+      </Control>
+      <Control Type="TabPage" Name="EmployeesTab" Text="Linked employees">
+        <Control Type="Grid" Name="EmployeesGrid" DataSource="PRLPayElementEmployeeTable_DS">
+          <Control Type="String" DataField="ComponentCode" />
+          <Control Type="String" DataField="EmployeeId" />
+          <Control Type="Real" DataField="OverrideAmount" />
+          <Control Type="Date" DataField="ValidFrom" />
+          <Control Type="Date" DataField="ValidTo" />
+          <Control Type="Enum" DataField="IsActive" />
+        </Control>
+      </Control>
+    </Control>
+  </Design>
+</Form>

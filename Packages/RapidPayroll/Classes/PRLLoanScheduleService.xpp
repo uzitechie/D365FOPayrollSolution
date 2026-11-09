@@ -1,0 +1,25 @@
+public class PRLLoanScheduleService
+{
+    public real calculateInstallment(real _principal, int _months, real _annualRate)
+    {
+        real monthlyRate;
+        real factor;
+        if (_months <= 0)
+        {
+            throw error("Loan months must be greater than zero.");
+        }
+        if (_annualRate <= 0)
+        {
+            return _principal / _months;
+        }
+
+        monthlyRate = _annualRate / 12;
+        factor = power(1 + monthlyRate, _months);
+        return _principal * ((monthlyRate * factor) / (factor - 1));
+    }
+
+    public real generatePayoutDeduction(real _requestedInstallment, real _loanOutstanding)
+    {
+        return min(_requestedInstallment, _loanOutstanding);
+    }
+}

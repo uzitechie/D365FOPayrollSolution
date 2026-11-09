@@ -1,0 +1,83 @@
+public class PRLPayrollRequestBuilder
+{
+    public static Query buildEmployeeQuery(str _runId)
+    {
+        Query query = new Query();
+        QueryBuildDataSource qbds = query.addDataSource(tableNum(PRLPayrollEmployeeInputTable));
+        SysQuery::findOrCreateRange(qbds, fieldNum(PRLPayrollEmployeeInputTable, RunId)).value(queryValue(_runId));
+        return query;
+    }
+
+    public static PRLPayrollRunRequestContract buildFromRunId(str _runId)
+    {
+        Query query = PRLPayrollRequestBuilder::buildEmployeeQuery(_runId);
+        return PRLPayrollRequestBuilder::buildFromRunIdAndQuery(_runId, query);
+    }
+
+    public static PRLPayrollRunRequestContract buildFromRunIdAndQuery(str _runId, Query _employeeQuery)
+    {
+        PRLPayrollRunTable runHeader;
+        PRLPayrollRunRequestContract request = new PRLPayrollRunRequestContract();
+        List employees = new List(Types::Class);
+        QueryRun queryRun;
+        PRLPayrollEmployeeInputTable inputTable;
+
+        select firstonly runHeader where runHeader.RunId == _runId;
+        if (!runHeader.RecId)
+        {
+            throw error(strFmt("Payroll run %1 was not found.", _runId));
+        }
+
+        request.parmRunId(runHeader.RunId);
+        request.parmLegalEntity(runHeader.LegalEntity);
+        request.parmPayPeriodFrom(runHeader.PayPeriodFrom);
+        request.parmPayPeriodTo(runHeader.PayPeriodTo);
+        request.parmPayoutCurrency(runHeader.PayoutCurrency);
+
+        if (!_employeeQuery)
+        {
+            _employeeQuery = PRLPayrollRequestBuilder::buildEmployeeQuery(_runId);
+        }
+
+        queryRun = new QueryRun(_employeeQuery);
+        while (queryRun.next())
+        {
+            inputTable = queryRun.get(tableNum(PRLPayrollEmployeeInputTable));
+            if (inputTable.RunId != _runId)
+            {
+                continue;
+            }
+            employees.addEnd(PRLPayrollRequestBuilder::employeeFromInput(inputTable));
+        }
+
+        request.parmEmployees(employees);
+        return request;
+    }
+
+    private static PRLEmployeePayrollInputContract employeeFromInput(PRLPayrollEmployeeInputTable _inputTable)
+    {
+        PRLEmployeePayrollInputContract employee = new PRLEmployeePayrollInputContract();
+        employee.parmEmployeeId(_inputTable.EmployeeId);
+        employee.parmLegalEntity(_inputTable.LegalEntity);
+        employee.parmCountryRegionId(_inputTable.CountryRegionId);
+        employee.parmPayrollCurrency(_inputTable.PayrollCurrency);
+        employee.parmEmploymentType(_inputTable.EmploymentType);
+        employee.parmIsExempt(_inputTable.IsExempt == NoYes::Yes);
+        employee.parmBasicSalary(_inputTable.BasicSalary);
+        employee.parmCommission(_inputTable.Commission);
+        employee.parmBonus(_inputTable.Bonus);
+        employee.parmTravelAllowance(_inputTable.TravelAllowance);
+        employee.parmAdHocAllowance(_inputTable.AdHocAllowance);
+        employee.parmAdHocDeduction(_inputTable.AdHocDeduction);
+        employee.parmScheduledHours(_inputTable.ScheduledHours);
+        employee.parmWorkedHours(_inputTable.WorkedHours);
+        employee.parmLeaveHours(_inputTable.LeaveHours);
+        employee.parmOvertimeHours15(_inputTable.OvertimeHours15);
+        employee.parmOvertimeHours20(_inputTable.OvertimeHours20);
+        employee.parmServiceYears(_inputTable.ServiceYears);
+        employee.parmLoanOutstanding(_inputTable.LoanOutstanding);
+        employee.parmLoanInstallment(_inputTable.LoanInstallment);
+        employee.parmTerminationReason(_inputTable.TerminationReason);
+        return employee;
+    }
+}

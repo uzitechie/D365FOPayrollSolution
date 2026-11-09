@@ -1,0 +1,22 @@
+public class PRLSalaryRevisionService
+{
+    public real calculateBackdatedDelta(real _oldMonthly, real _newMonthly, date _effectiveDate, date _periodFrom, date _periodTo)
+    {
+        int coveredDays;
+        int periodDays;
+        if (_effectiveDate > _periodTo)
+        {
+            return 0;
+        }
+
+        periodDays = max(_periodTo - _periodFrom + 1, 1);
+        coveredDays = _periodTo - max(_periodFrom, _effectiveDate) + 1;
+        coveredDays = max(coveredDays, 0);
+        return (_newMonthly - _oldMonthly) * (coveredDays / any2Real(periodDays));
+    }
+
+    public real applyPromotionIncrement(real _currentSalary, real _incrementPercent)
+    {
+        return _currentSalary * (1 + (_incrementPercent / 100));
+    }
+}

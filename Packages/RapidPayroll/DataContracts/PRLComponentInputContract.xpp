@@ -1,0 +1,44 @@
+[DataContract]
+public class PRLComponentInputContract
+{
+    str componentCode;
+    str componentType;
+    real amount;
+    str expressionOverride;
+    date effectiveDate;
+
+    [DataMember("componentCode")]
+    public str parmComponentCode(str _componentCode = componentCode)
+    {
+        componentCode = _componentCode;
+        return componentCode;
+    }
+
+    [DataMember("componentType")]
+    public str parmComponentType(str _componentType = componentType)
+    {
+        componentType = _componentType;
+        return componentType;
+    }
+
+    [DataMember("amount")]
+    public real parmAmount(real _amount = amount)
+    {
+        amount = _amount;
+        return amount;
+    }
+
+    [DataMember("expressionOverride")]
+    public str parmExpressionOverride(str _expressionOverride = expressionOverride)
+    {
+        expressionOverride = _expressionOverride;
+        return expressionOverride;
+    }
+
+    [DataMember("effectiveDate")]
+    public date parmEffectiveDate(date _effectiveDate = effectiveDate)
+    {
+        effectiveDate = _effectiveDate;
+        return effectiveDate;
+    }
+}

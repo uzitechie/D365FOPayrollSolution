@@ -1,0 +1,67 @@
+public class PRLPayrollRunBatch extends RunBaseBatch
+{
+    #define.CurrentVersion(1)
+
+    str runId;
+    container packedEmployeeQuery;
+
+    public str parmRunId(str _runId = runId)
+    {
+        runId = _runId;
+        return runId;
+    }
+
+    public Query parmEmployeeQuery(Query _query = null)
+    {
+        if (_query)
+        {
+            packedEmployeeQuery = _query.pack();
+        }
+        if (conLen(packedEmployeeQuery) == 0)
+        {
+            return null;
+        }
+        return new Query(packedEmployeeQuery);
+    }
+
+    public boolean canGoBatchJournal()
+    {
+        return true;
+    }
+
+    public boolean canRunInNewSession()
+    {
+        return true;
+    }
+
+    public container pack()
+    {
+        return [#CurrentVersion, runId, packedEmployeeQuery];
+    }
+
+    public boolean unpack(container _packedClass)
+    {
+        Version version = conPeek(_packedClass, 1);
+        switch (version)
+        {
+            case #CurrentVersion:
+                [version, runId, packedEmployeeQuery] = _packedClass;
+                return true;
+        }
+        return false;
+    }
+
+    public void run()
+    {
+        Query query = conLen(packedEmployeeQuery) > 0
+            ? new Query(packedEmployeeQuery)
+            : PRLPayrollRequestBuilder::buildEmployeeQuery(runId);
+        PRLPayrollRunRequestContract request = PRLPayrollRequestBuilder::buildFromRunIdAndQuery(runId, query);
+        PRLPayrollProcessService::processPayroll(request);
+    }
+
+    public static ClassDescription description()
+    {
+        return "Run payroll by query";
+    }
+}

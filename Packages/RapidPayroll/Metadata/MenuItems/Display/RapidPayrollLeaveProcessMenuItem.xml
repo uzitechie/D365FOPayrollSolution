@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DisplayMenuItem Name="RapidPayrollLeaveProcessMenuItem">
+  <Label>Leave process</Label>
+  <ObjectType>Form</ObjectType>
+  <Object>PRLLeaveProcessForm</Object>
+  <NeedsRecord>No</NeedsRecord>
+  <RunOn>Called from</RunOn>
+</DisplayMenuItem>

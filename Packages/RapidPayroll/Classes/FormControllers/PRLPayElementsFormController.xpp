@@ -1,0 +1,9 @@
+public class PRLPayElementsFormController
+{
+    public static void refreshLinks(FormRun _formRun)
+    {
+        _formRun.dataSource(formDataSourceStr(PRLPayElementsForm, PRLFormulaTable_DS)).research(true);
+        _formRun.dataSource(formDataSourceStr(PRLPayElementsForm, PRLExpressionTable_DS)).research(true);
+        _formRun.dataSource(formDataSourceStr(PRLPayElementsForm, PRLPayElementEmployeeTable_DS)).research(true);
+    }
+}

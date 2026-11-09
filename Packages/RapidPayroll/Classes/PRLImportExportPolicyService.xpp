@@ -1,0 +1,45 @@
+public class PRLImportExportPolicyService
+{
+    public static void setOrganizationPolicy(str _legalEntity, str _entityName, boolean _isAllowed)
+    {
+        PRLImportExportPolicyTable policyTable;
+
+        ttsbegin;
+        select firstonly forupdate policyTable
+            where policyTable.LegalEntity == _legalEntity
+               && policyTable.EntityName == _entityName;
+
+        if (policyTable.RecId)
+        {
+            policyTable.IsAllowed = _isAllowed ? NoYes::Yes : NoYes::No;
+            policyTable.update();
+        }
+        else
+        {
+            policyTable.clear();
+            policyTable.LegalEntity = _legalEntity;
+            policyTable.EntityName = _entityName;
+            policyTable.IsAllowed = _isAllowed ? NoYes::Yes : NoYes::No;
+            policyTable.insert();
+        }
+        ttscommit;
+    }
+
+    public static boolean isAllowed(str _legalEntity, str _entityName)
+    {
+        PRLImportExportPolicyTable policyTable;
+        select firstonly policyTable
+            where policyTable.LegalEntity == _legalEntity
+               && policyTable.EntityName == _entityName;
+        return policyTable.RecId && policyTable.IsAllowed == NoYes::Yes;
+    }
+
+    [SysEntryPointAttribute]
+    public static void validateImportExport(str _legalEntity, str _entityName)
+    {
+        if (!PRLImportExportPolicyService::isAllowed(_legalEntity, _entityName))
+        {
+            throw error(strFmt("Import/export is not allowed for legal entity %1 on entity %2.", _legalEntity, _entityName));
+        }
+    }
+}

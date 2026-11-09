@@ -1,0 +1,87 @@
+public class PRLFormulaBuilderService
+{
+    [SysEntryPointAttribute]
+    public static List getFunctionCatalog()
+    {
+        List functions = new List(Types::String);
+        functions.addEnd("IF(condition,trueValue,falseValue)");
+        functions.addEnd("MIN(a,b,...)");
+        functions.addEnd("MAX(a,b,...)");
+        functions.addEnd("ROUND(value,decimals)");
+        functions.addEnd("PRORATE(base,numerator,denominator)");
+        functions.addEnd("CAP(value,max)");
+        functions.addEnd("FX(amount)");
+        functions.addEnd("YEARSERVICE()");
+        functions.addEnd("WORKDAYS()");
+        functions.addEnd("TIER(years,dailyRate)");
+        return functions;
+    }
+
+    [SysEntryPointAttribute]
+    public static boolean validateFormula(str _expression)
+    {
+        PRLFormulaEngine engine = new PRLFormulaEngine();
+        return engine.validate(_expression);
+    }
+
+    [SysEntryPointAttribute]
+    public static real previewFormula(str _expression, PRLEmployeePayrollInputContract _employee, str _payoutCurrency)
+    {
+        PRLCalcContext ctx = new PRLCalcContext();
+        PRLFormulaEngine engine = new PRLFormulaEngine();
+        ctx.parmCountryRegionId(_employee.parmCountryRegionId());
+        ctx.parmLegalEntity(_employee.parmLegalEntity());
+        ctx.parmSourceCurrency(_employee.parmPayrollCurrency());
+        ctx.parmPayoutCurrency(_payoutCurrency);
+        ctx.parmIsExempt(_employee.parmIsExempt());
+        ctx.parmServiceYears(_employee.parmServiceYears());
+        ctx.setNumeric("BASICSALARY", _employee.parmBasicSalary());
+        ctx.setNumeric("OTHOURS15", _employee.parmOvertimeHours15());
+        ctx.setNumeric("OTHOURS20", _employee.parmOvertimeHours20());
+        ctx.setNumeric("SCHEDULEDHOURS", _employee.parmScheduledHours());
+        ctx.setNumeric("LEAVEHOURS", _employee.parmLeaveHours());
+        ctx.setNumeric("HOURLYRATE", _employee.parmBasicSalary() / max(_employee.parmScheduledHours(), 1));
+        return engine.evaluate(_expression, ctx);
+    }
+
+    [SysEntryPointAttribute]
+    public static void saveFormula(PRLFormulaDefinitionContract _formula)
+    {
+        str formulaId = _formula.parmFormulaId();
+        PRLExpressionTable expressionTable;
+        PRLFormulaBuilderService::validateFormula(_formula.parmExpression());
+        PRLFormulaRepository::upsertFormula(_formula);
+
+        if (!formulaId)
+        {
+            formulaId = PRLFormulaRepository::buildKey(
+                _formula.parmComponentCode(),
+                _formula.parmCountryRegionId(),
+                _formula.parmLegalEntity(),
+                _formula.parmIsExemptOnly());
+        }
+
+        ttsbegin;
+        select firstonly forupdate expressionTable
+            where expressionTable.FormulaId == formulaId
+               && expressionTable.ExpressionCode == "PRIMARY";
+        if (expressionTable.RecId)
+        {
+            expressionTable.ExpressionText = _formula.parmExpression();
+            expressionTable.IsActive = NoYes::Yes;
+            expressionTable.update();
+        }
+        else
+        {
+            expressionTable.clear();
+            expressionTable.ExpressionId = strFmt("%1|PRIMARY", formulaId);
+            expressionTable.FormulaId = formulaId;
+            expressionTable.ExpressionCode = "PRIMARY";
+            expressionTable.ExpressionText = _formula.parmExpression();
+            expressionTable.SequenceNo = 1;
+            expressionTable.IsActive = NoYes::Yes;
+            expressionTable.insert();
+        }
+        ttscommit;
+    }
+}

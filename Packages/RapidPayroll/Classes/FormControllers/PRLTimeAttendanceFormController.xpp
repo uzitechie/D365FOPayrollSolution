@@ -1,0 +1,14 @@
+public class PRLTimeAttendanceFormController
+{
+    public static void rollupToRun(FormRun _formRun)
+    {
+        FormDataSource attendanceDs = _formRun.dataSource(formDataSourceStr(PRLTimeAttendanceForm, PRLAttendanceTable_DS));
+        PRLAttendanceTable attendance = attendanceDs.cursor();
+        if (!attendance.RunId)
+        {
+            throw error("RunId is required on the selected attendance row.");
+        }
+        (new PRLTimeAttendanceService()).rollupRunAttendance(attendance.RunId);
+        info(strFmt("Attendance rollup completed for payroll run %1.", attendance.RunId));
+    }
+}

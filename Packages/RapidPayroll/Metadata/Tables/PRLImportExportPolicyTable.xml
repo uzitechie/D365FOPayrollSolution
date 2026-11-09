@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLImportExportPolicyTable">
+  <Label>Payroll import export policy</Label>
+  <PrimaryIndex>PolicyIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="LegalEntity" Type="String" StringSize="20" Mandatory="Yes" />
+    <Field Name="EntityName" Type="String" StringSize="80" Mandatory="Yes" />
+    <Field Name="IsAllowed" Type="Enum" EnumType="NoYes" Mandatory="Yes" />
+  </Fields>
+  <Indexes>
+    <Index Name="PolicyIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="LegalEntity" />
+      <FieldRef Name="EntityName" />
+    </Index>
+  </Indexes>
+</Table>

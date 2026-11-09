@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Name="PRLPayrollWorkspaceForm">
+  <Caption>Payroll workspace</Caption>
+  <DataSources>
+    <DataSource Name="PRLPayrollRunTable_DS" Table="PRLPayrollRunTable" />
+    <DataSource Name="PRLPayrollEmployeeInputTable_DS" Table="PRLPayrollEmployeeInputTable" JoinSource="PRLPayrollRunTable_DS" LinkType="Delayed" />
+    <DataSource Name="PRLPayrollRunLineTable_DS" Table="PRLPayrollRunLineTable" JoinSource="PRLPayrollRunTable_DS" LinkType="Delayed" />
+  </DataSources>
+  <Design>
+    <Control Type="ActionPane" Name="ActionPane">
+      <Control Type="Button" Name="ProcessPayrollAllInteractiveButton" Text="Process all (interactive)" />
+      <Control Type="Button" Name="ProcessPayrollFilteredInteractiveButton" Text="Process filtered (interactive)" />
+      <Control Type="Button" Name="ProcessPayrollAllBatchButton" Text="Process all (batch)" />
+      <Control Type="Button" Name="ProcessPayrollFilteredBatchButton" Text="Process filtered (batch)" />
+      <Control Type="Button" Name="ReloadResultsButton" Text="Reload results" />
+    </Control>
+    <Control Type="Tab" Name="MainTab">
+      <Control Type="TabPage" Name="RunHeader" Text="Run header">
+        <Control Type="Grid" Name="RunHeaderGrid" DataSource="PRLPayrollRunTable_DS">
+          <Control Type="String" DataField="RunId" />
+          <Control Type="String" DataField="LegalEntity" />
+          <Control Type="Date" DataField="PayPeriodFrom" />
+          <Control Type="Date" DataField="PayPeriodTo" />
+          <Control Type="String" DataField="PayoutCurrency" />
+          <Control Type="String" DataField="Status" />
+          <Control Type="Real" DataField="TotalGross" />
+          <Control Type="Real" DataField="TotalDeduction" />
+          <Control Type="Real" DataField="TotalNet" />
+        </Control>
+      </Control>
+      <Control Type="TabPage" Name="EmployeeInputs" Text="Employee inputs">
+        <Control Type="Grid" Name="EmployeeInputGrid" DataSource="PRLPayrollEmployeeInputTable_DS">
+          <Control Type="String" DataField="EmployeeId" />
+          <Control Type="String" DataField="CountryRegionId" />
+          <Control Type="String" DataField="PayrollCurrency" />
+          <Control Type="Enum" DataField="IsExempt" />
+          <Control Type="Real" DataField="BasicSalary" />
+          <Control Type="Real" DataField="Commission" />
+          <Control Type="Real" DataField="Bonus" />
+          <Control Type="Real" DataField="ScheduledHours" />
+          <Control Type="Real" DataField="WorkedHours" />
+          <Control Type="Real" DataField="OvertimeHours15" />
+          <Control Type="Real" DataField="OvertimeHours20" />
+          <Control Type="Real" DataField="LeaveHours" />
+        </Control>
+      </Control>
+      <Control Type="TabPage" Name="PayrollResults" Text="Payroll results">
+        <Control Type="Grid" Name="ResultGrid" DataSource="PRLPayrollRunLineTable_DS">
+          <Control Type="String" DataField="EmployeeId" />
+          <Control Type="Real" DataField="GrossPay" />
+          <Control Type="Real" DataField="TotalDeductions" />
+          <Control Type="Real" DataField="NetPay" />
+          <Control Type="Real" DataField="OvertimePay" />
+          <Control Type="Real" DataField="GratuityPay" />
+          <Control Type="Real" DataField="EndOfServicePay" />
+          <Control Type="Real" DataField="LoanDeduction" />
+          <Control Type="Real" DataField="LeaveDeduction" />
+          <Control Type="Real" DataField="AirTicketBenefit" />
+        </Control>
+      </Control>
+    </Control>
+  </Design>
+</Form>

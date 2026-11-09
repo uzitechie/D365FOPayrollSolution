@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLLoanScheduleTable">
+  <Label>Payroll loan schedule</Label>
+  <PrimaryIndex>LoanScheduleIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="LoanId" Type="String" StringSize="40" Mandatory="Yes" />
+    <Field Name="InstallmentNo" Type="Integer" Mandatory="Yes" />
+    <Field Name="DueDate" Type="Date" Mandatory="Yes" />
+    <Field Name="InstallmentAmount" Type="Real" Mandatory="Yes" />
+    <Field Name="RemainingBalance" Type="Real" />
+    <Field Name="PaidAmount" Type="Real" />
+    <Field Name="IsPaid" Type="Enum" EnumType="NoYes" />
+  </Fields>
+  <Indexes>
+    <Index Name="LoanScheduleIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="LoanId" />
+      <FieldRef Name="InstallmentNo" />
+    </Index>
+  </Indexes>
+</Table>

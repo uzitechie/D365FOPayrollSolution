@@ -1,0 +1,15 @@
+public class PRLMonthlyPayrollProcessFormController
+{
+    public static void runMonthlyProcess(FormRun _formRun)
+    {
+        FormDataSource processDs = _formRun.dataSource(formDataSourceStr(PRLMonthlyPayrollProcessForm, PRLMonthlyPayrollProcessTable_DS));
+        PRLMonthlyPayrollProcessTable processTable = processDs.cursor();
+        if (!processTable.ProcessId)
+        {
+            throw error("ProcessId is required on the selected monthly payroll row.");
+        }
+        (new PRLMonthlyPayrollProcessService()).runMonthlyProcess(processTable.ProcessId);
+        processDs.research(true);
+        info(strFmt("Monthly payroll process %1 completed.", processTable.ProcessId));
+    }
+}

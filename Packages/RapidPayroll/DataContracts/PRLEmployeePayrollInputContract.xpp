@@ -1,0 +1,181 @@
+[DataContract]
+public class PRLEmployeePayrollInputContract
+{
+    str employeeId;
+    str legalEntity;
+    str countryRegionId;
+    str payrollCurrency;
+    str employmentType;
+    boolean isExempt;
+    real basicSalary;
+    real commission;
+    real bonus;
+    real travelAllowance;
+    real adHocAllowance;
+    real adHocDeduction;
+    real scheduledHours;
+    real workedHours;
+    real leaveHours;
+    real overtimeHours15;
+    real overtimeHours20;
+    real serviceYears;
+    real loanOutstanding;
+    real loanInstallment;
+    str terminationReason;
+    List componentInputs;
+
+    [DataMember("employeeId")]
+    public str parmEmployeeId(str _employeeId = employeeId)
+    {
+        employeeId = _employeeId;
+        return employeeId;
+    }
+
+    [DataMember("legalEntity")]
+    public str parmLegalEntity(str _legalEntity = legalEntity)
+    {
+        legalEntity = _legalEntity;
+        return legalEntity;
+    }
+
+    [DataMember("countryRegionId")]
+    public str parmCountryRegionId(str _countryRegionId = countryRegionId)
+    {
+        countryRegionId = _countryRegionId;
+        return countryRegionId;
+    }
+
+    [DataMember("payrollCurrency")]
+    public str parmPayrollCurrency(str _payrollCurrency = payrollCurrency)
+    {
+        payrollCurrency = _payrollCurrency;
+        return payrollCurrency;
+    }
+
+    [DataMember("employmentType")]
+    public str parmEmploymentType(str _employmentType = employmentType)
+    {
+        employmentType = _employmentType;
+        return employmentType;
+    }
+
+    [DataMember("isExempt")]
+    public boolean parmIsExempt(boolean _isExempt = isExempt)
+    {
+        isExempt = _isExempt;
+        return isExempt;
+    }
+
+    [DataMember("basicSalary")]
+    public real parmBasicSalary(real _basicSalary = basicSalary)
+    {
+        basicSalary = _basicSalary;
+        return basicSalary;
+    }
+
+    [DataMember("commission")]
+    public real parmCommission(real _commission = commission)
+    {
+        commission = _commission;
+        return commission;
+    }
+
+    [DataMember("bonus")]
+    public real parmBonus(real _bonus = bonus)
+    {
+        bonus = _bonus;
+        return bonus;
+    }
+
+    [DataMember("travelAllowance")]
+    public real parmTravelAllowance(real _travelAllowance = travelAllowance)
+    {
+        travelAllowance = _travelAllowance;
+        return travelAllowance;
+    }
+
+    [DataMember("adHocAllowance")]
+    public real parmAdHocAllowance(real _adHocAllowance = adHocAllowance)
+    {
+        adHocAllowance = _adHocAllowance;
+        return adHocAllowance;
+    }
+
+    [DataMember("adHocDeduction")]
+    public real parmAdHocDeduction(real _adHocDeduction = adHocDeduction)
+    {
+        adHocDeduction = _adHocDeduction;
+        return adHocDeduction;
+    }
+
+    [DataMember("scheduledHours")]
+    public real parmScheduledHours(real _scheduledHours = scheduledHours)
+    {
+        scheduledHours = _scheduledHours;
+        return scheduledHours;
+    }
+
+    [DataMember("workedHours")]
+    public real parmWorkedHours(real _workedHours = workedHours)
+    {
+        workedHours = _workedHours;
+        return workedHours;
+    }
+
+    [DataMember("leaveHours")]
+    public real parmLeaveHours(real _leaveHours = leaveHours)
+    {
+        leaveHours = _leaveHours;
+        return leaveHours;
+    }
+
+    [DataMember("overtimeHours15")]
+    public real parmOvertimeHours15(real _overtimeHours15 = overtimeHours15)
+    {
+        overtimeHours15 = _overtimeHours15;
+        return overtimeHours15;
+    }
+
+    [DataMember("overtimeHours20")]
+    public real parmOvertimeHours20(real _overtimeHours20 = overtimeHours20)
+    {
+        overtimeHours20 = _overtimeHours20;
+        return overtimeHours20;
+    }
+
+    [DataMember("serviceYears")]
+    public real parmServiceYears(real _serviceYears = serviceYears)
+    {
+        serviceYears = _serviceYears;
+        return serviceYears;
+    }
+
+    [DataMember("loanOutstanding")]
+    public real parmLoanOutstanding(real _loanOutstanding = loanOutstanding)
+    {
+        loanOutstanding = _loanOutstanding;
+        return loanOutstanding;
+    }
+
+    [DataMember("loanInstallment")]
+    public real parmLoanInstallment(real _loanInstallment = loanInstallment)
+    {
+        loanInstallment = _loanInstallment;
+        return loanInstallment;
+    }
+
+    [DataMember("terminationReason")]
+    public str parmTerminationReason(str _terminationReason = terminationReason)
+    {
+        terminationReason = _terminationReason;
+        return terminationReason;
+    }
+
+    [DataMember("componentInputs"),
+     AifCollectionType("componentInputs", Types::Class, classStr(PRLComponentInputContract))]
+    public List parmComponentInputs(List _componentInputs = componentInputs)
+    {
+        componentInputs = _componentInputs;
+        return componentInputs;
+    }
+}

@@ -1,0 +1,92 @@
+public class PRLEndOfServiceService
+{
+    public boolean shouldProcessEOS(str _countryRegionId, str _terminationReason)
+    {
+        return PRLCountryRegionHelper::isGCC(_countryRegionId) && _terminationReason != "";
+    }
+
+    public real calculateEOSAmount(str _countryRegionId, real _basicSalary, real _serviceYears, str _terminationReason)
+    {
+        PRLCalcContext ctx = new PRLCalcContext();
+        PRLPayrollLawStrategy strategy;
+        if (!PRLCountryRegionHelper::isGCC(_countryRegionId))
+        {
+            return 0;
+        }
+
+        ctx.parmCountryRegionId(_countryRegionId);
+        ctx.parmServiceYears(_serviceYears);
+        ctx.setNumeric("BASICSALARY", _basicSalary);
+        ctx.setText("TERMINATIONREASON", _terminationReason);
+        strategy = PRLPayrollLawStrategyFactory::build(_countryRegionId);
+        return strategy.endOfService(ctx);
+    }
+
+    public void persistSettlement(
+        str _runId,
+        str _employeeId,
+        str _countryRegionId,
+        real _serviceYears,
+        real _baseSalary,
+        real _gratuityAmount,
+        real _eosAmount,
+        real _airTicketAmount)
+    {
+        PRLEOSSettlementTable settlement;
+        if (_eosAmount <= 0 && _airTicketAmount <= 0)
+        {
+            return;
+        }
+
+        ttsbegin;
+        settlement.clear();
+        settlement.SettlementId = strFmt("%1|%2|%3", _runId, _employeeId, date2Str(systemDateGet(), 123, 2, DateDay::Digits2, DateSeparator::None, DateMonth::Digits2, DateSeparator::None, DateYear::Digits4));
+        settlement.RunId = _runId;
+        settlement.EmployeeId = _employeeId;
+        settlement.CountryRegionId = _countryRegionId;
+        settlement.ServiceYears = _serviceYears;
+        settlement.BaseSalary = _baseSalary;
+        settlement.GratuityAmount = _gratuityAmount;
+        settlement.EOSAmount = _eosAmount;
+        settlement.AirTicketAmount = _airTicketAmount;
+        settlement.SettlementDate = systemDateGet();
+        settlement.Status = "Calculated";
+        settlement.insert();
+        ttscommit;
+    }
+
+    public void processRunSettlements(str _runId)
+    {
+        PRLEOSSettlementTable settlementTable;
+        PRLPayrollEmployeeInputTable employeeInput;
+        real eosAmount;
+        ttsbegin;
+        delete_from settlementTable
+            where settlementTable.RunId == _runId;
+        ttscommit;
+
+        while select employeeInput
+            where employeeInput.RunId == _runId
+        {
+            if (!this.shouldProcessEOS(employeeInput.CountryRegionId, employeeInput.TerminationReason))
+            {
+                continue;
+            }
+            eosAmount = this.calculateEOSAmount(
+                employeeInput.CountryRegionId,
+                employeeInput.BasicSalary,
+                employeeInput.ServiceYears,
+                employeeInput.TerminationReason);
+
+            this.persistSettlement(
+                _runId,
+                employeeInput.EmployeeId,
+                employeeInput.CountryRegionId,
+                employeeInput.ServiceYears,
+                employeeInput.BasicSalary,
+                0,
+                eosAmount,
+                0);
+        }
+    }
+}

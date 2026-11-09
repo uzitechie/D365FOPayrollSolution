@@ -1,0 +1,237 @@
+public class PRLFormulaEngine
+{
+    PRLFunctionProvider functionProvider;
+    str expr;
+    int pos;
+    int exprLen;
+    PRLCalcContext context;
+
+    public void new()
+    {
+        functionProvider = new PRLFunctionProvider();
+    }
+
+    public real evaluate(str _expression, PRLCalcContext _context)
+    {
+        expr = _expression;
+        pos = 1;
+        exprLen = strLen(expr);
+        context = _context;
+        return this.parseExpression();
+    }
+
+    public boolean validate(str _expression)
+    {
+        PRLCalcContext validationCtx = new PRLCalcContext();
+        this.evaluate(_expression, validationCtx);
+        return true;
+    }
+
+    private real parseExpression()
+    {
+        real left = this.parseTerm();
+        str op;
+        this.skipWs();
+
+        while (this.peekChar() == "+" || this.peekChar() == "-")
+        {
+            op = this.nextChar();
+            if (op == "+")
+            {
+                left += this.parseTerm();
+            }
+            else
+            {
+                left -= this.parseTerm();
+            }
+            this.skipWs();
+        }
+        return left;
+    }
+
+    private real parseTerm()
+    {
+        real left = this.parseFactor();
+        str op;
+        this.skipWs();
+
+        while (this.peekChar() == "*" || this.peekChar() == "/")
+        {
+            op = this.nextChar();
+            if (op == "*")
+            {
+                left *= this.parseFactor();
+            }
+            else
+            {
+                left /= this.parseFactor();
+            }
+            this.skipWs();
+        }
+        return left;
+    }
+
+    private real parseFactor()
+    {
+        real result;
+        str token;
+        str ch;
+
+        this.skipWs();
+        ch = this.peekChar();
+
+        if (ch == "(")
+        {
+            this.nextChar();
+            result = this.parseExpression();
+            this.expect(")");
+            return result;
+        }
+
+        if (ch == "-")
+        {
+            this.nextChar();
+            return -this.parseFactor();
+        }
+
+        if (this.isDigit(ch))
+        {
+            return this.parseNumber();
+        }
+
+        if (this.isIdentifierStart(ch))
+        {
+            token = this.parseIdentifier();
+            this.skipWs();
+            if (this.peekChar() == "(")
+            {
+                return this.parseFunction(token);
+            }
+            return this.resolveVariable(token);
+        }
+
+        throw error(strFmt("Unexpected token at position %1 in '%2'.", pos, expr));
+    }
+
+    private real parseFunction(str _name)
+    {
+        List args = new List(Types::Real);
+        this.expect("(");
+        this.skipWs();
+
+        if (this.peekChar() != ")")
+        {
+            args.addEnd(this.parseExpression());
+            this.skipWs();
+            while (this.peekChar() == ",")
+            {
+                this.nextChar();
+                args.addEnd(this.parseExpression());
+                this.skipWs();
+            }
+        }
+        this.expect(")");
+        return functionProvider.execute(_name, args, context);
+    }
+
+    private real resolveVariable(str _name)
+    {
+        str key = strUpr(_name);
+        if (key == "ISEXEMPT")
+        {
+            return context.parmIsExempt() ? 1 : 0;
+        }
+        if (!context.hasNumeric(key))
+        {
+            return 0;
+        }
+        return context.getNumeric(key);
+    }
+
+    private real parseNumber()
+    {
+        int start = pos;
+        str ch;
+        while (pos <= exprLen)
+        {
+            ch = subStr(expr, pos, 1);
+            if (!(this.isDigit(ch) || ch == "."))
+            {
+                break;
+            }
+            pos++;
+        }
+        return str2Num(subStr(expr, start, pos - start));
+    }
+
+    private str parseIdentifier()
+    {
+        int start = pos;
+        str ch;
+        while (pos <= exprLen)
+        {
+            ch = subStr(expr, pos, 1);
+            if (!(this.isIdentifierPart(ch)))
+            {
+                break;
+            }
+            pos++;
+        }
+        return strUpr(subStr(expr, start, pos - start));
+    }
+
+    private void skipWs()
+    {
+        str ch;
+        while (pos <= exprLen)
+        {
+            ch = subStr(expr, pos, 1);
+            if (ch != " " && ch != "\t")
+            {
+                break;
+            }
+            pos++;
+        }
+    }
+
+    private str peekChar()
+    {
+        if (pos > exprLen)
+        {
+            return "";
+        }
+        return subStr(expr, pos, 1);
+    }
+
+    private str nextChar()
+    {
+        str ch = this.peekChar();
+        pos++;
+        return ch;
+    }
+
+    private void expect(str _expected)
+    {
+        str actual = this.nextChar();
+        if (actual != _expected)
+        {
+            throw error(strFmt("Expected '%1' but found '%2'.", _expected, actual));
+        }
+    }
+
+    private boolean isDigit(str _ch)
+    {
+        return _ch >= "0" && _ch <= "9";
+    }
+
+    private boolean isIdentifierStart(str _ch)
+    {
+        str c = strUpr(_ch);
+        return (c >= "A" && c <= "Z") || _ch == "_";
+    }
+
+    private boolean isIdentifierPart(str _ch)
+    {
+        return this.isIdentifierStart(_ch) || this.isDigit(_ch);
+    }
+}

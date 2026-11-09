@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLEOSSettlementTable">
+  <Label>Payroll end of service settlements</Label>
+  <PrimaryIndex>EOSSettlementIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="SettlementId" Type="String" StringSize="60" Mandatory="Yes" />
+    <Field Name="RunId" Type="String" StringSize="40" />
+    <Field Name="EmployeeId" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="CountryRegionId" Type="String" StringSize="10" Mandatory="Yes" />
+    <Field Name="ServiceYears" Type="Real" />
+    <Field Name="BaseSalary" Type="Real" />
+    <Field Name="GratuityAmount" Type="Real" />
+    <Field Name="EOSAmount" Type="Real" />
+    <Field Name="AirTicketAmount" Type="Real" />
+    <Field Name="SettlementDate" Type="Date" />
+    <Field Name="Status" Type="String" StringSize="20" />
+  </Fields>
+  <Indexes>
+    <Index Name="EOSSettlementIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="SettlementId" />
+    </Index>
+    <Index Name="EOSRunEmployeeIdx" AllowDuplicates="Yes">
+      <FieldRef Name="RunId" />
+      <FieldRef Name="EmployeeId" />
+    </Index>
+  </Indexes>
+</Table>

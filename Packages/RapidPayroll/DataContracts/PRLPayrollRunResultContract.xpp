@@ -1,0 +1,69 @@
+[DataContract]
+public class PRLPayrollRunResultContract
+{
+    str runId;
+    str legalEntity;
+    date payPeriodFrom;
+    date payPeriodTo;
+    real totalGross;
+    real totalDeduction;
+    real totalNet;
+    List resultLines;
+
+    [DataMember("runId")]
+    public str parmRunId(str _runId = runId)
+    {
+        runId = _runId;
+        return runId;
+    }
+
+    [DataMember("legalEntity")]
+    public str parmLegalEntity(str _legalEntity = legalEntity)
+    {
+        legalEntity = _legalEntity;
+        return legalEntity;
+    }
+
+    [DataMember("payPeriodFrom")]
+    public date parmPayPeriodFrom(date _payPeriodFrom = payPeriodFrom)
+    {
+        payPeriodFrom = _payPeriodFrom;
+        return payPeriodFrom;
+    }
+
+    [DataMember("payPeriodTo")]
+    public date parmPayPeriodTo(date _payPeriodTo = payPeriodTo)
+    {
+        payPeriodTo = _payPeriodTo;
+        return payPeriodTo;
+    }
+
+    [DataMember("totalGross")]
+    public real parmTotalGross(real _totalGross = totalGross)
+    {
+        totalGross = _totalGross;
+        return totalGross;
+    }
+
+    [DataMember("totalDeduction")]
+    public real parmTotalDeduction(real _totalDeduction = totalDeduction)
+    {
+        totalDeduction = _totalDeduction;
+        return totalDeduction;
+    }
+
+    [DataMember("totalNet")]
+    public real parmTotalNet(real _totalNet = totalNet)
+    {
+        totalNet = _totalNet;
+        return totalNet;
+    }
+
+    [DataMember("resultLines"),
+     AifCollectionType("resultLines", Types::Class, classStr(PRLPayrollResultContract))]
+    public List parmResultLines(List _resultLines = resultLines)
+    {
+        resultLines = _resultLines;
+        return resultLines;
+    }
+}

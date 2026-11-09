@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Name="PRLTimeAttendanceForm">
+  <Caption>Time and attendance process</Caption>
+  <DataSources>
+    <DataSource Name="PRLAttendanceTable_DS" Table="PRLAttendanceTable" />
+  </DataSources>
+  <Design>
+    <Control Type="ActionPane" Name="ActionPane">
+      <Control Type="Button" Name="RollupAttendanceButton" Text="Rollup attendance to payroll run" />
+    </Control>
+    <Control Type="Grid" Name="AttendanceGrid" DataSource="PRLAttendanceTable_DS">
+      <Control Type="String" DataField="RunId" />
+      <Control Type="String" DataField="EmployeeId" />
+      <Control Type="Date" DataField="AttendanceDate" />
+      <Control Type="Real" DataField="ScheduledHours" />
+      <Control Type="Real" DataField="HoursWorked" />
+      <Control Type="Real" DataField="OvertimeHours15" />
+      <Control Type="Real" DataField="OvertimeHours20" />
+      <Control Type="Real" DataField="LeaveHours" />
+      <Control Type="String" DataField="ShiftCode" />
+      <Control Type="String" DataField="ApprovalStatus" />
+    </Control>
+  </Design>
+</Form>

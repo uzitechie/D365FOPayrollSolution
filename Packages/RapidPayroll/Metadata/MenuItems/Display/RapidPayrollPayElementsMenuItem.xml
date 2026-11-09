@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DisplayMenuItem Name="RapidPayrollPayElementsMenuItem">
+  <Label>Pay elements</Label>
+  <ObjectType>Form</ObjectType>
+  <Object>PRLPayElementsForm</Object>
+  <NeedsRecord>No</NeedsRecord>
+  <RunOn>Called from</RunOn>
+</DisplayMenuItem>

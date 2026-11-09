@@ -1,0 +1,20 @@
+public class PRLPayrollWorkspaceController
+{
+    [SysEntryPointAttribute]
+    public static PRLPayrollRunResultContract runPayrollSingleClick(PRLPayrollRunRequestContract _request)
+    {
+        return PRLPayrollProcessService::processPayroll(_request);
+    }
+
+    [SysEntryPointAttribute]
+    public static void configureExchangeRate(str _fromCurrency, str _toCurrency, real _rate)
+    {
+        PRLFormulaRepository::setExchangeRate(_fromCurrency, _toCurrency, _rate);
+    }
+
+    [SysEntryPointAttribute]
+    public static real simulateBackdatedSalaryChange(real _oldSalary, real _newSalary, date _effectiveDate, date _periodFrom, date _periodTo)
+    {
+        return (new PRLSalaryRevisionService()).calculateBackdatedDelta(_oldSalary, _newSalary, _effectiveDate, _periodFrom, _periodTo);
+    }
+}

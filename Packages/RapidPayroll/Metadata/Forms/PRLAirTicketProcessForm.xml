@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Name="PRLAirTicketProcessForm">
+  <Caption>Air tickets process (GCC)</Caption>
+  <DataSources>
+    <DataSource Name="PRLAirTicketPolicyTable_DS" Table="PRLAirTicketPolicyTable" />
+    <DataSource Name="PRLAirTicketTransactionTable_DS" Table="PRLAirTicketTransactionTable" />
+  </DataSources>
+  <Design>
+    <Control Type="ActionPane" Name="ActionPane">
+      <Control Type="Button" Name="SeedAirTicketPolicyButton" Text="Seed air ticket policy" />
+      <Control Type="Button" Name="GenerateAirTicketsByRunButton" Text="Generate air tickets by run" />
+    </Control>
+    <Control Type="Tab" Name="MainTab">
+      <Control Type="TabPage" Name="PolicyTab" Text="Policy">
+        <Control Type="Grid" Name="PolicyGrid" DataSource="PRLAirTicketPolicyTable_DS">
+          <Control Type="String" DataField="PolicyId" />
+          <Control Type="String" DataField="CountryRegionId" />
+          <Control Type="String" DataField="TicketClass" />
+          <Control Type="Integer" DataField="EligibilityMonths" />
+          <Control Type="Real" DataField="TicketAmount" />
+          <Control Type="Enum" DataField="IsActive" />
+        </Control>
+      </Control>
+      <Control Type="TabPage" Name="TicketsTab" Text="Transactions">
+        <Control Type="Grid" Name="TicketGrid" DataSource="PRLAirTicketTransactionTable_DS">
+          <Control Type="String" DataField="AirTicketTxnId" />
+          <Control Type="String" DataField="RunId" />
+          <Control Type="String" DataField="EmployeeId" />
+          <Control Type="String" DataField="CountryRegionId" />
+          <Control Type="Real" DataField="TicketAmount" />
+          <Control Type="Date" DataField="TravelDate" />
+          <Control Type="String" DataField="Status" />
+        </Control>
+      </Control>
+    </Control>
+  </Design>
+</Form>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLLeavePolicyTable">
+  <Label>Payroll leave policy</Label>
+  <PrimaryIndex>LeavePolicyIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="PolicyId" Type="String" StringSize="40" Mandatory="Yes" />
+    <Field Name="CountryRegionId" Type="String" StringSize="10" Mandatory="Yes" />
+    <Field Name="LeaveType" Type="String" StringSize="20" Mandatory="Yes" />
+    <Field Name="AnnualEntitlementDays" Type="Real" Mandatory="Yes" />
+    <Field Name="MonthlyAccrualDays" Type="Real" />
+    <Field Name="CarryForwardCapDays" Type="Real" />
+    <Field Name="UnpaidAfterBalance" Type="Enum" EnumType="NoYes" />
+    <Field Name="IsActive" Type="Enum" EnumType="NoYes" />
+  </Fields>
+  <Indexes>
+    <Index Name="LeavePolicyIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="PolicyId" />
+    </Index>
+    <Index Name="LeaveCountryLookupIdx" AllowDuplicates="Yes">
+      <FieldRef Name="CountryRegionId" />
+      <FieldRef Name="LeaveType" />
+    </Index>
+  </Indexes>
+</Table>

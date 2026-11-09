@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLAttendanceTable">
+  <Label>Payroll attendance</Label>
+  <PrimaryIndex>AttendanceIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="RunId" Type="String" StringSize="40" Mandatory="Yes" />
+    <Field Name="EmployeeId" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="AttendanceDate" Type="Date" Mandatory="Yes" />
+    <Field Name="ScheduledHours" Type="Real" />
+    <Field Name="HoursWorked" Type="Real" />
+    <Field Name="OvertimeHours15" Type="Real" />
+    <Field Name="OvertimeHours20" Type="Real" />
+    <Field Name="LeaveHours" Type="Real" />
+    <Field Name="ShiftCode" Type="String" StringSize="20" />
+    <Field Name="InTime" Type="String" StringSize="8" />
+    <Field Name="OutTime" Type="String" StringSize="8" />
+    <Field Name="ApprovalStatus" Type="String" StringSize="20" />
+  </Fields>
+  <Indexes>
+    <Index Name="AttendanceIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="RunId" />
+      <FieldRef Name="EmployeeId" />
+      <FieldRef Name="AttendanceDate" />
+    </Index>
+  </Indexes>
+</Table>

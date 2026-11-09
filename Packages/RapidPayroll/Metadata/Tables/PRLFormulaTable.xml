@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLFormulaTable">
+  <Label>Payroll formula</Label>
+  <TitleField1>ComponentCode</TitleField1>
+  <PrimaryIndex>FormulaIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="FormulaId" Type="String" StringSize="60" AllowEditOnCreate="Yes" Mandatory="Yes" />
+    <Field Name="ComponentCode" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="Expression" Type="String" StringSize="1000" Mandatory="Yes" />
+    <Field Name="CountryRegionId" Type="String" StringSize="10" />
+    <Field Name="LegalEntity" Type="String" StringSize="20" />
+    <Field Name="IsExemptOnly" Type="Enum" EnumType="NoYes" />
+    <Field Name="ValidFrom" Type="Date" />
+    <Field Name="ValidTo" Type="Date" />
+    <Field Name="FormulaCurrency" Type="String" StringSize="3" />
+  </Fields>
+  <FieldGroups>
+    <FieldGroup Name="Overview">
+      <FieldRef Name="FormulaId" />
+      <FieldRef Name="ComponentCode" />
+      <FieldRef Name="CountryRegionId" />
+      <FieldRef Name="LegalEntity" />
+      <FieldRef Name="IsExemptOnly" />
+    </FieldGroup>
+  </FieldGroups>
+  <Indexes>
+    <Index Name="FormulaIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="FormulaId" />
+    </Index>
+    <Index Name="LookupIdx" AllowDuplicates="Yes">
+      <FieldRef Name="ComponentCode" />
+      <FieldRef Name="CountryRegionId" />
+      <FieldRef Name="LegalEntity" />
+      <FieldRef Name="IsExemptOnly" />
+    </Index>
+  </Indexes>
+</Table>

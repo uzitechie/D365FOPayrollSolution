@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLPayrollRunLineTable">
+  <Label>Payroll run lines</Label>
+  <PrimaryIndex>RunLineIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="RunId" Type="String" StringSize="40" Mandatory="Yes" />
+    <Field Name="EmployeeId" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="LegalEntity" Type="String" StringSize="20" />
+    <Field Name="CountryRegionId" Type="String" StringSize="10" />
+    <Field Name="PayrollCurrency" Type="String" StringSize="3" />
+    <Field Name="GrossPay" Type="Real" />
+    <Field Name="TotalDeductions" Type="Real" />
+    <Field Name="NetPay" Type="Real" />
+    <Field Name="OvertimePay" Type="Real" />
+    <Field Name="GratuityPay" Type="Real" />
+    <Field Name="EndOfServicePay" Type="Real" />
+    <Field Name="LoanDeduction" Type="Real" />
+    <Field Name="LeaveDeduction" Type="Real" />
+    <Field Name="AirTicketBenefit" Type="Real" />
+  </Fields>
+  <Indexes>
+    <Index Name="RunLineIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="RunId" />
+      <FieldRef Name="EmployeeId" />
+    </Index>
+    <Index Name="RunLookupIdx" AllowDuplicates="Yes">
+      <FieldRef Name="RunId" />
+    </Index>
+  </Indexes>
+</Table>

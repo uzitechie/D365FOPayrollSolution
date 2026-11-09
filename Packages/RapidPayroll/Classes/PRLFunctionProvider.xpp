@@ -1,0 +1,184 @@
+public class PRLFunctionProvider
+{
+    public real execute(str _functionName, List _args, PRLCalcContext _ctx)
+    {
+        str func = strUpr(_functionName);
+        switch (func)
+        {
+            case "IF":
+                return this.fnIf(_args);
+            case "MIN":
+                return this.fnMin(_args);
+            case "MAX":
+                return this.fnMax(_args);
+            case "ROUND":
+                return this.fnRound(_args);
+            case "PRORATE":
+                return this.fnProrate(_args);
+            case "CAP":
+                return this.fnCap(_args);
+            case "FX":
+                return this.fnFx(_args, _ctx);
+            case "YEARSERVICE":
+                return _ctx.parmServiceYears();
+            case "WORKDAYS":
+                return _ctx.getNumeric("WORKDAYS");
+            case "TIER":
+                return this.fnTier(_args);
+            default:
+                throw error(strFmt("Unsupported formula function '%1'.", _functionName));
+        }
+    }
+
+    private real fnIf(List _args)
+    {
+        ListEnumerator le = _args.getEnumerator();
+        real values[3];
+        int i = 1;
+        while (le.moveNext() && i <= 3)
+        {
+            values[i] = any2Real(le.current());
+            i++;
+        }
+        if (i <= 3)
+        {
+            throw error("IF requires 3 arguments.");
+        }
+        return values[1] != 0 ? values[2] : values[3];
+    }
+
+    private real fnMin(List _args)
+    {
+        ListEnumerator le = _args.getEnumerator();
+        real result = any2Real(le.moveNext() ? le.current() : 0);
+        while (le.moveNext())
+        {
+            result = min(result, any2Real(le.current()));
+        }
+        return result;
+    }
+
+    private real fnMax(List _args)
+    {
+        ListEnumerator le = _args.getEnumerator();
+        real result = any2Real(le.moveNext() ? le.current() : 0);
+        while (le.moveNext())
+        {
+            result = max(result, any2Real(le.current()));
+        }
+        return result;
+    }
+
+    private real fnRound(List _args)
+    {
+        ListEnumerator le = _args.getEnumerator();
+        real value;
+        int decimals = 2;
+        if (le.moveNext())
+        {
+            value = any2Real(le.current());
+        }
+        if (le.moveNext())
+        {
+            decimals = any2Int(le.current());
+        }
+        return round(value, power(10, -decimals));
+    }
+
+    private real fnProrate(List _args)
+    {
+        ListEnumerator le = _args.getEnumerator();
+        real baseValue;
+        real numerator;
+        real denominator;
+        if (!le.moveNext())
+        {
+            throw error("PRORATE requires 3 arguments.");
+        }
+        baseValue = any2Real(le.current());
+        if (!le.moveNext())
+        {
+            throw error("PRORATE requires 3 arguments.");
+        }
+        numerator = any2Real(le.current());
+        if (!le.moveNext())
+        {
+            throw error("PRORATE requires 3 arguments.");
+        }
+        denominator = any2Real(le.current());
+        if (denominator == 0)
+        {
+            throw error("PRORATE denominator cannot be zero.");
+        }
+        return baseValue * (numerator / denominator);
+    }
+
+    private real fnCap(List _args)
+    {
+        ListEnumerator le = _args.getEnumerator();
+        real value;
+        real cap;
+        if (!le.moveNext())
+        {
+            throw error("CAP requires 2 arguments.");
+        }
+        value = any2Real(le.current());
+        if (!le.moveNext())
+        {
+            throw error("CAP requires 2 arguments.");
+        }
+        cap = any2Real(le.current());
+        return min(value, cap);
+    }
+
+    private real fnFx(List _args, PRLCalcContext _ctx)
+    {
+        ListEnumerator le = _args.getEnumerator();
+        real amount;
+        real rate;
+        if (!le.moveNext())
+        {
+            throw error("FX requires 1 argument.");
+        }
+        amount = any2Real(le.current());
+        rate = PRLFormulaRepository::getExchangeRate(_ctx.parmSourceCurrency(), _ctx.parmPayoutCurrency());
+        if (rate == 0)
+        {
+            throw error(strFmt("Exchange rate missing for %1 to %2.", _ctx.parmSourceCurrency(), _ctx.parmPayoutCurrency()));
+        }
+        return amount * rate;
+    }
+
+    private real fnTier(List _args)
+    {
+        ListEnumerator le = _args.getEnumerator();
+        real years;
+        real dailyRate;
+        real factor;
+        if (!le.moveNext())
+        {
+            throw error("TIER requires at least 2 arguments.");
+        }
+        years = any2Real(le.current());
+        if (!le.moveNext())
+        {
+            throw error("TIER requires at least 2 arguments.");
+        }
+        dailyRate = any2Real(le.current());
+
+        if (years <= 1)
+        {
+            factor = 0;
+        }
+        else if (years <= 5)
+        {
+            factor = years * 21;
+        }
+        else
+        {
+            factor = (5 * 21) + ((years - 5) * 30);
+        }
+
+        return dailyRate * factor;
+    }
+}

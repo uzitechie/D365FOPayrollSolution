@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DisplayMenuItem Name="RapidPayrollFormulaBuilderMenuItem">
+  <Label>Formula builder</Label>
+  <ObjectType>Form</ObjectType>
+  <Object>PRLFormulaBuilderForm</Object>
+  <NeedsRecord>No</NeedsRecord>
+  <RunOn>Called from</RunOn>
+</DisplayMenuItem>

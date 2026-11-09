@@ -1,0 +1,78 @@
+public class PRLLeaveProcessService
+{
+    public void seedDefaultPolicies()
+    {
+        this.upsertPolicy("GCC-ANNUAL", "AE", "ANNUAL", 30, 2.5, 60, true);
+        this.upsertPolicy("EU-ANNUAL", "DE", "ANNUAL", 25, 2.08, 30, true);
+    }
+
+    public void applyLeaveToRun(str _runId)
+    {
+        PRLLeaveTransactionTable leaveTxn;
+        PRLPayrollEmployeeInputTable inputTable;
+        real leaveHours;
+
+        while select EmployeeId, sum(LeaveHours) from leaveTxn
+            group by leaveTxn.EmployeeId
+            where leaveTxn.RunId == _runId
+               && leaveTxn.Status == "Approved"
+        {
+            leaveHours = leaveTxn.LeaveHours;
+            ttsbegin;
+            select firstonly forupdate inputTable
+                where inputTable.RunId == _runId
+                   && inputTable.EmployeeId == leaveTxn.EmployeeId;
+            if (inputTable.RecId)
+            {
+                inputTable.LeaveHours = max(inputTable.LeaveHours, leaveHours);
+                inputTable.update();
+            }
+            ttscommit;
+        }
+    }
+
+    public real defaultAnnualEntitlement(str _countryRegionId)
+    {
+        return PRLCountryRegionHelper::isGCC(_countryRegionId) ? 30 : 25;
+    }
+
+    public void upsertPolicy(
+        str _policyId,
+        str _countryRegionId,
+        str _leaveType,
+        real _annualDays,
+        real _monthlyAccrualDays,
+        real _carryForwardCapDays,
+        boolean _isActive)
+    {
+        PRLLeavePolicyTable policy;
+
+        ttsbegin;
+        select firstonly forupdate policy where policy.PolicyId == _policyId;
+        if (policy.RecId)
+        {
+            policy.CountryRegionId = _countryRegionId;
+            policy.LeaveType = _leaveType;
+            policy.AnnualEntitlementDays = _annualDays;
+            policy.MonthlyAccrualDays = _monthlyAccrualDays;
+            policy.CarryForwardCapDays = _carryForwardCapDays;
+            policy.UnpaidAfterBalance = NoYes::Yes;
+            policy.IsActive = _isActive ? NoYes::Yes : NoYes::No;
+            policy.update();
+        }
+        else
+        {
+            policy.clear();
+            policy.PolicyId = _policyId;
+            policy.CountryRegionId = _countryRegionId;
+            policy.LeaveType = _leaveType;
+            policy.AnnualEntitlementDays = _annualDays;
+            policy.MonthlyAccrualDays = _monthlyAccrualDays;
+            policy.CarryForwardCapDays = _carryForwardCapDays;
+            policy.UnpaidAfterBalance = NoYes::Yes;
+            policy.IsActive = _isActive ? NoYes::Yes : NoYes::No;
+            policy.insert();
+        }
+        ttscommit;
+    }
+}

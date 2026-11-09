@@ -1,0 +1,15 @@
+public class PRLEndOfServiceFormController
+{
+    public static void processRunSettlements(FormRun _formRun)
+    {
+        FormDataSource eosDs = _formRun.dataSource(formDataSourceStr(PRLEndOfServiceForm, PRLEOSSettlementTable_DS));
+        PRLEOSSettlementTable settlement = eosDs.cursor();
+        if (!settlement.RunId)
+        {
+            throw error("RunId is required on the selected EOS settlement row.");
+        }
+        (new PRLEndOfServiceService()).processRunSettlements(settlement.RunId);
+        info(strFmt("EOS settlement generation completed for run %1.", settlement.RunId));
+        eosDs.research(true);
+    }
+}

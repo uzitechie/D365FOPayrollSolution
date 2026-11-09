@@ -1,0 +1,278 @@
+public class PRLPayrollProcessService
+{
+    PRLFormulaEngine engine;
+    PRLLoanScheduleService loanService;
+    PRLTimeAttendanceService attendanceService;
+    PRLLeaveProcessService leaveService;
+    PRLAirTicketService airTicketService;
+    PRLEndOfServiceService eosService;
+
+    public void new()
+    {
+        engine = new PRLFormulaEngine();
+        loanService = new PRLLoanScheduleService();
+        attendanceService = new PRLTimeAttendanceService();
+        leaveService = new PRLLeaveProcessService();
+        airTicketService = new PRLAirTicketService();
+        eosService = new PRLEndOfServiceService();
+    }
+
+    public PRLPayrollRunResultContract processRun(PRLPayrollRunRequestContract _request)
+    {
+        ListEnumerator employeeEnum;
+        PRLEmployeePayrollInputContract employee;
+        PRLPayrollRunResultContract runResult = new PRLPayrollRunResultContract();
+        List resultLines = new List(Types::Class);
+        PRLPayrollResultContract resultLine;
+        real totalGross;
+        real totalDeduction;
+        real totalNet;
+
+        this.loadFormulas(_request.parmFormulaDefinitions());
+        attendanceService.rollupRunAttendance(_request.parmRunId());
+        leaveService.applyLeaveToRun(_request.parmRunId());
+        this.ensureRunHeader(_request);
+        this.deleteRunLines(_request.parmRunId());
+
+        runResult.parmRunId(_request.parmRunId());
+        runResult.parmLegalEntity(_request.parmLegalEntity());
+        runResult.parmPayPeriodFrom(_request.parmPayPeriodFrom());
+        runResult.parmPayPeriodTo(_request.parmPayPeriodTo());
+
+        employeeEnum = _request.parmEmployees().getEnumerator();
+        while (employeeEnum.moveNext())
+        {
+            employee = employeeEnum.current();
+            resultLine = this.processEmployee(_request, employee);
+            resultLines.addEnd(resultLine);
+            this.persistRunLine(_request.parmRunId(), resultLine);
+            totalGross += resultLine.parmGrossPay();
+            totalDeduction += resultLine.parmTotalDeductions();
+            totalNet += resultLine.parmNetPay();
+        }
+
+        runResult.parmTotalGross(totalGross);
+        runResult.parmTotalDeduction(totalDeduction);
+        runResult.parmTotalNet(totalNet);
+        runResult.parmResultLines(resultLines);
+        this.updateRunHeaderTotals(_request.parmRunId(), totalGross, totalDeduction, totalNet);
+
+        return runResult;
+    }
+
+    private void ensureRunHeader(PRLPayrollRunRequestContract _request)
+    {
+        PRLPayrollRunTable runTable;
+        ttsbegin;
+        select firstonly forupdate runTable where runTable.RunId == _request.parmRunId();
+        if (runTable.RecId)
+        {
+            runTable.LegalEntity = _request.parmLegalEntity();
+            runTable.PayPeriodFrom = _request.parmPayPeriodFrom();
+            runTable.PayPeriodTo = _request.parmPayPeriodTo();
+            runTable.PayoutCurrency = _request.parmPayoutCurrency();
+            runTable.Status = "Processing";
+            runTable.update();
+        }
+        else
+        {
+            runTable.clear();
+            runTable.RunId = _request.parmRunId();
+            runTable.LegalEntity = _request.parmLegalEntity();
+            runTable.PayPeriodFrom = _request.parmPayPeriodFrom();
+            runTable.PayPeriodTo = _request.parmPayPeriodTo();
+            runTable.PayoutCurrency = _request.parmPayoutCurrency();
+            runTable.Status = "Processing";
+            runTable.insert();
+        }
+        ttscommit;
+    }
+
+    private void deleteRunLines(str _runId)
+    {
+        PRLPayrollRunLineTable runLine;
+        ttsbegin;
+        delete_from runLine where runLine.RunId == _runId;
+        ttscommit;
+    }
+
+    private void persistRunLine(str _runId, PRLPayrollResultContract _line)
+    {
+        PRLPayrollRunLineTable runLine;
+        ttsbegin;
+        runLine.clear();
+        runLine.RunId = _runId;
+        runLine.EmployeeId = _line.parmEmployeeId();
+        runLine.LegalEntity = _line.parmLegalEntity();
+        runLine.CountryRegionId = _line.parmCountryRegionId();
+        runLine.PayrollCurrency = _line.parmPayrollCurrency();
+        runLine.GrossPay = _line.parmGrossPay();
+        runLine.TotalDeductions = _line.parmTotalDeductions();
+        runLine.NetPay = _line.parmNetPay();
+        runLine.OvertimePay = _line.parmOvertimePay();
+        runLine.GratuityPay = _line.parmGratuityPay();
+        runLine.EndOfServicePay = _line.parmEndOfServicePay();
+        runLine.LoanDeduction = _line.parmLoanDeduction();
+        runLine.LeaveDeduction = _line.parmLeaveDeduction();
+        runLine.AirTicketBenefit = _line.parmAirTicketBenefit();
+        runLine.insert();
+        ttscommit;
+    }
+
+    private void updateRunHeaderTotals(str _runId, real _totalGross, real _totalDeduction, real _totalNet)
+    {
+        PRLPayrollRunTable runTable;
+        ttsbegin;
+        select firstonly forupdate runTable where runTable.RunId == _runId;
+        if (!runTable.RecId)
+        {
+            throw error(strFmt("Payroll run header %1 was not found.", _runId));
+        }
+        runTable.TotalGross = _totalGross;
+        runTable.TotalDeduction = _totalDeduction;
+        runTable.TotalNet = _totalNet;
+        runTable.Status = "Completed";
+        runTable.update();
+        ttscommit;
+    }
+
+    private void loadFormulas(List _formulas)
+    {
+        ListEnumerator le;
+        PRLFormulaDefinitionContract formula;
+        if (!_formulas)
+        {
+            return;
+        }
+        le = _formulas.getEnumerator();
+        while (le.moveNext())
+        {
+            formula = le.current();
+            PRLFormulaRepository::upsertFormula(formula);
+        }
+    }
+
+    private PRLPayrollResultContract processEmployee(PRLPayrollRunRequestContract _request, PRLEmployeePayrollInputContract _employee)
+    {
+        PRLPayrollResultContract result = new PRLPayrollResultContract();
+        PRLCalcContext ctx = this.createContext(_request, _employee);
+        PRLPayrollLawStrategy lawStrategy = PRLPayrollLawStrategyFactory::build(_employee.parmCountryRegionId());
+        real overtimePay = this.evaluateComponent("OVERTIME_PAY", ctx);
+        real leaveDeduction = this.evaluateComponent("LEAVE_DEDUCTION", ctx);
+        real statutoryDeduction;
+        real gratuity;
+        real eos;
+        real loanDeduction;
+        real airTicketBenefit;
+        real gross;
+        real totalDeduction;
+        real net;
+
+        gratuity = lawStrategy.gratuity(ctx);
+        eos = lawStrategy.endOfService(ctx);
+        loanDeduction = loanService.generatePayoutDeduction(_employee.parmLoanInstallment(), _employee.parmLoanOutstanding());
+        airTicketBenefit = airTicketService.ensureMonthlyBenefit(
+            _request.parmRunId(),
+            _employee.parmEmployeeId(),
+            _employee.parmCountryRegionId());
+
+        gross = _employee.parmBasicSalary()
+            + _employee.parmCommission()
+            + _employee.parmBonus()
+            + _employee.parmTravelAllowance()
+            + _employee.parmAdHocAllowance()
+            + overtimePay
+            + gratuity
+            + eos
+            + airTicketBenefit;
+
+        ctx.setNumeric("GROSSPAY", gross);
+        statutoryDeduction = lawStrategy.statutoryDeduction(ctx);
+
+        totalDeduction = statutoryDeduction
+            + leaveDeduction
+            + _employee.parmAdHocDeduction()
+            + loanDeduction;
+
+        ctx.setNumeric("TOTALDEDUCTIONS", totalDeduction);
+        net = this.evaluateComponent("NET_PAY", ctx);
+
+        result.parmEmployeeId(_employee.parmEmployeeId());
+        result.parmLegalEntity(_employee.parmLegalEntity());
+        result.parmCountryRegionId(_employee.parmCountryRegionId());
+        result.parmPayrollCurrency(_request.parmPayoutCurrency());
+        result.parmGrossPay(gross);
+        result.parmTotalDeductions(totalDeduction);
+        result.parmNetPay(net);
+        result.parmOvertimePay(overtimePay);
+        result.parmGratuityPay(gratuity);
+        result.parmEndOfServicePay(eos);
+        result.parmLoanDeduction(loanDeduction);
+        result.parmLeaveDeduction(leaveDeduction);
+        result.parmAirTicketBenefit(airTicketBenefit);
+
+        if (eosService.shouldProcessEOS(_employee.parmCountryRegionId(), _employee.parmTerminationReason()))
+        {
+            eosService.persistSettlement(
+                _request.parmRunId(),
+                _employee.parmEmployeeId(),
+                _employee.parmCountryRegionId(),
+                _employee.parmServiceYears(),
+                _employee.parmBasicSalary(),
+                gratuity,
+                eos,
+                airTicketBenefit);
+        }
+        return result;
+    }
+
+    private PRLCalcContext createContext(PRLPayrollRunRequestContract _request, PRLEmployeePayrollInputContract _employee)
+    {
+        PRLCalcContext ctx = new PRLCalcContext();
+        real hourlyRate;
+        real workingHours = max(_employee.parmScheduledHours(), 1);
+
+        ctx.parmCountryRegionId(_employee.parmCountryRegionId());
+        ctx.parmLegalEntity(_employee.parmLegalEntity());
+        ctx.parmSourceCurrency(_employee.parmPayrollCurrency());
+        ctx.parmPayoutCurrency(_request.parmPayoutCurrency());
+        ctx.parmPeriodFrom(_request.parmPayPeriodFrom());
+        ctx.parmPeriodTo(_request.parmPayPeriodTo());
+        ctx.parmIsExempt(_employee.parmIsExempt());
+        ctx.parmServiceYears(_employee.parmServiceYears());
+
+        hourlyRate = _employee.parmBasicSalary() / workingHours;
+
+        ctx.setNumeric("BASICSALARY", _employee.parmBasicSalary());
+        ctx.setNumeric("COMMISSION", _employee.parmCommission());
+        ctx.setNumeric("BONUS", _employee.parmBonus());
+        ctx.setNumeric("TRAVELALLOWANCE", _employee.parmTravelAllowance());
+        ctx.setNumeric("ADHOCALLOWANCE", _employee.parmAdHocAllowance());
+        ctx.setNumeric("ADHOCDEDUCTION", _employee.parmAdHocDeduction());
+        ctx.setNumeric("SCHEDULEDHOURS", _employee.parmScheduledHours());
+        ctx.setNumeric("WORKEDHOURS", _employee.parmWorkedHours());
+        ctx.setNumeric("LEAVEHOURS", _employee.parmLeaveHours());
+        ctx.setNumeric("OTHOURS15", _employee.parmOvertimeHours15());
+        ctx.setNumeric("OTHOURS20", _employee.parmOvertimeHours20());
+        ctx.setNumeric("HOURLYRATE", hourlyRate);
+        ctx.setNumeric("SERVICEYEARS", _employee.parmServiceYears());
+        ctx.setText("TERMINATIONREASON", strUpr(_employee.parmTerminationReason()));
+        return ctx;
+    }
+
+    private real evaluateComponent(str _componentCode, PRLCalcContext _ctx)
+    {
+        str expression = PRLFormulaRepository::getExpression(_componentCode, _ctx);
+        if (!expression)
+        {
+            return 0;
+        }
+        return engine.evaluate(expression, _ctx);
+    }
+
+    [SysEntryPointAttribute]
+    public static PRLPayrollRunResultContract processPayroll(PRLPayrollRunRequestContract _request)
+    {
+        return (new PRLPayrollProcessService()).processRun(_request);
+    }
+}

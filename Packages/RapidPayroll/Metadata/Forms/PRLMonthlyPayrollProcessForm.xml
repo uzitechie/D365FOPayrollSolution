@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Name="PRLMonthlyPayrollProcessForm">
+  <Caption>Monthly payroll process</Caption>
+  <DataSources>
+    <DataSource Name="PRLMonthlyPayrollProcessTable_DS" Table="PRLMonthlyPayrollProcessTable" />
+  </DataSources>
+  <Design>
+    <Control Type="ActionPane" Name="ActionPane">
+      <Control Type="Button" Name="RunMonthlyPayrollButton" Text="Run monthly payroll process" />
+    </Control>
+    <Control Type="Grid" Name="MonthlyProcessGrid" DataSource="PRLMonthlyPayrollProcessTable_DS">
+      <Control Type="String" DataField="ProcessId" />
+      <Control Type="String" DataField="LegalEntity" />
+      <Control Type="Integer" DataField="PayrollYear" />
+      <Control Type="Integer" DataField="PayrollMonth" />
+      <Control Type="String" DataField="RunId" />
+      <Control Type="Date" DataField="ProcessDate" />
+      <Control Type="String" DataField="Status" />
+      <Control Type="String" DataField="Notes" />
+    </Control>
+  </Design>
+</Form>

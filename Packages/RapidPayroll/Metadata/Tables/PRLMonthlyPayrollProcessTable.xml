@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLMonthlyPayrollProcessTable">
+  <Label>Payroll monthly process</Label>
+  <PrimaryIndex>MonthlyProcessIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="ProcessId" Type="String" StringSize="50" Mandatory="Yes" />
+    <Field Name="LegalEntity" Type="String" StringSize="20" Mandatory="Yes" />
+    <Field Name="PayrollYear" Type="Integer" Mandatory="Yes" />
+    <Field Name="PayrollMonth" Type="Integer" Mandatory="Yes" />
+    <Field Name="RunId" Type="String" StringSize="40" Mandatory="Yes" />
+    <Field Name="ProcessDate" Type="Date" />
+    <Field Name="Status" Type="String" StringSize="20" />
+    <Field Name="Notes" Type="String" StringSize="250" />
+  </Fields>
+  <Indexes>
+    <Index Name="MonthlyProcessIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="ProcessId" />
+    </Index>
+    <Index Name="MonthlyRunIdx" AllowDuplicates="Yes">
+      <FieldRef Name="RunId" />
+    </Index>
+  </Indexes>
+</Table>

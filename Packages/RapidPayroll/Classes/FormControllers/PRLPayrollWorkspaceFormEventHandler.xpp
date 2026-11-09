@@ -1,0 +1,32 @@
+public class PRLPayrollWorkspaceFormEventHandler
+{
+    [FormControlEventHandler(formControlStr(PRLPayrollWorkspaceForm, ProcessPayrollAllInteractiveButton), FormControlEventType::Clicked)]
+    public static void ProcessPayrollAllInteractiveButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLPayrollWorkspaceFormController::processPayrollInteractive(sender.formRun(), false);
+    }
+
+    [FormControlEventHandler(formControlStr(PRLPayrollWorkspaceForm, ProcessPayrollFilteredInteractiveButton), FormControlEventType::Clicked)]
+    public static void ProcessPayrollFilteredInteractiveButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLPayrollWorkspaceFormController::processPayrollInteractive(sender.formRun(), true);
+    }
+
+    [FormControlEventHandler(formControlStr(PRLPayrollWorkspaceForm, ProcessPayrollAllBatchButton), FormControlEventType::Clicked)]
+    public static void ProcessPayrollAllBatchButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLPayrollWorkspaceFormController::processPayrollBatch(sender.formRun(), false);
+    }
+
+    [FormControlEventHandler(formControlStr(PRLPayrollWorkspaceForm, ProcessPayrollFilteredBatchButton), FormControlEventType::Clicked)]
+    public static void ProcessPayrollFilteredBatchButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLPayrollWorkspaceFormController::processPayrollBatch(sender.formRun(), true);
+    }
+
+    [FormControlEventHandler(formControlStr(PRLPayrollWorkspaceForm, ReloadResultsButton), FormControlEventType::Clicked)]
+    public static void ReloadResultsButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLPayrollWorkspaceFormController::refreshResults(sender.formRun());
+    }
+}

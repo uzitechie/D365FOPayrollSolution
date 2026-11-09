@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Name="PRLFormulaBuilderForm">
+  <Caption>Payroll formula builder</Caption>
+  <DataSources>
+    <DataSource Name="PRLFormulaTable_DS" Table="PRLFormulaTable" />
+  </DataSources>
+  <Design>
+    <Control Type="ActionPane" Name="ActionPane">
+      <Control Type="Button" Name="ValidateButton" Text="Validate formula" />
+      <Control Type="Button" Name="PreviewButton" Text="Preview formula" />
+      <Control Type="Button" Name="SaveFormulaButton" Text="Save formula" />
+      <Control Type="Button" Name="RefreshFunctionsButton" Text="Refresh functions" />
+    </Control>
+    <Control Type="Grid" Name="FormulaGrid" DataSource="PRLFormulaTable_DS">
+      <Control Type="String" DataField="FormulaId" />
+      <Control Type="String" DataField="ComponentCode" />
+      <Control Type="String" DataField="CountryRegionId" />
+      <Control Type="String" DataField="LegalEntity" />
+      <Control Type="Enum" DataField="IsExemptOnly" />
+      <Control Type="String" DataField="Expression" />
+      <Control Type="Date" DataField="ValidFrom" />
+      <Control Type="Date" DataField="ValidTo" />
+      <Control Type="String" DataField="FormulaCurrency" />
+    </Control>
+    <Control Type="Group" Name="FunctionsPanel">
+      <Control Type="String" Name="FunctionCatalogText" Label="Function catalog" />
+      <Control Type="String" Name="PreviewResultText" Label="Preview result" />
+    </Control>
+  </Design>
+</Form>

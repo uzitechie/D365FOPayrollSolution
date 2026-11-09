@@ -1,0 +1,8 @@
+public class PRLMonthlyPayrollProcessFormEventHandler
+{
+    [FormControlEventHandler(formControlStr(PRLMonthlyPayrollProcessForm, RunMonthlyPayrollButton), FormControlEventType::Clicked)]
+    public static void RunMonthlyPayrollButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLMonthlyPayrollProcessFormController::runMonthlyProcess(sender.formRun());
+    }
+}

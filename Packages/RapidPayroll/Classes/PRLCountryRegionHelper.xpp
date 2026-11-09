@@ -1,0 +1,13 @@
+public class PRLCountryRegionHelper
+{
+    public static boolean isGCC(str _countryRegionId)
+    {
+        str country = strUpr(_countryRegionId);
+        return country == "AE"
+            || country == "SA"
+            || country == "QA"
+            || country == "KW"
+            || country == "BH"
+            || country == "OM";
+    }
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Module Name="RapidPayrollModule">
+  <Label>Rapid Payroll</Label>
+  <Description>Rapid Payroll module for payroll setup, formula building, and processing.</Description>
+  <MainMenu>RapidPayroll</MainMenu>
+  <MenuItems>
+    <MenuItem Name="RapidPayrollWorkspaceMenuItem" />
+    <MenuItem Name="RapidPayrollPayElementsMenuItem" />
+    <MenuItem Name="RapidPayrollFormulaBuilderMenuItem" />
+    <MenuItem Name="RapidPayrollLeaveProcessMenuItem" />
+    <MenuItem Name="RapidPayrollTimeAttendanceMenuItem" />
+    <MenuItem Name="RapidPayrollEOSProcessMenuItem" />
+    <MenuItem Name="RapidPayrollAirTicketProcessMenuItem" />
+    <MenuItem Name="RapidPayrollMonthlyProcessMenuItem" />
+  </MenuItems>
+</Module>

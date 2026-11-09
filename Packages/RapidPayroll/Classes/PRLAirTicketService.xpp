@@ -1,0 +1,109 @@
+public class PRLAirTicketService
+{
+    public void seedDefaultPolicies()
+    {
+        this.upsertPolicy("GCC-TKT-AE", "AE", "Economy", 12, 3500, true);
+        this.upsertPolicy("GCC-TKT-SA", "SA", "Economy", 12, 3000, true);
+    }
+
+    public real ensureMonthlyBenefit(str _runId, str _employeeId, str _countryRegionId)
+    {
+        PRLAirTicketTransactionTable ticketTxn;
+        PRLAirTicketPolicyTable policy;
+        real amount;
+        date cutoffDate;
+
+        if (!PRLCountryRegionHelper::isGCC(_countryRegionId))
+        {
+            return 0;
+        }
+
+        select firstonly ticketTxn
+            where ticketTxn.RunId == _runId
+               && ticketTxn.EmployeeId == _employeeId
+               && ticketTxn.CountryRegionId == _countryRegionId
+               && ticketTxn.Status == "Approved";
+        if (ticketTxn.RecId)
+        {
+            return ticketTxn.TicketAmount;
+        }
+
+        select firstonly policy
+            where policy.CountryRegionId == _countryRegionId
+               && policy.IsActive == NoYes::Yes;
+
+        if (!policy.RecId || policy.TicketAmount <= 0)
+        {
+            return 0;
+        }
+
+        cutoffDate = systemDateGet() - (max(policy.EligibilityMonths, 1) * 30);
+        select firstonly ticketTxn
+            where ticketTxn.EmployeeId == _employeeId
+               && ticketTxn.CountryRegionId == _countryRegionId
+               && ticketTxn.TravelDate >= cutoffDate
+               && ticketTxn.Status == "Approved";
+        if (ticketTxn.RecId)
+        {
+            return 0;
+        }
+
+        amount = policy.TicketAmount;
+        ttsbegin;
+        ticketTxn.clear();
+        ticketTxn.AirTicketTxnId = strFmt("%1|%2|%3", _runId, _employeeId, date2Str(systemDateGet(), 123, 2, DateDay::Digits2, DateSeparator::None, DateMonth::Digits2, DateSeparator::None, DateYear::Digits4));
+        ticketTxn.RunId = _runId;
+        ticketTxn.EmployeeId = _employeeId;
+        ticketTxn.CountryRegionId = _countryRegionId;
+        ticketTxn.TicketAmount = amount;
+        ticketTxn.TravelDate = systemDateGet();
+        ticketTxn.Status = "Approved";
+        ticketTxn.insert();
+        ttscommit;
+        return amount;
+    }
+
+    public void generateRunAirTickets(str _runId)
+    {
+        PRLPayrollEmployeeInputTable inputTable;
+        while select inputTable
+            where inputTable.RunId == _runId
+        {
+            this.ensureMonthlyBenefit(_runId, inputTable.EmployeeId, inputTable.CountryRegionId);
+        }
+    }
+
+    private void upsertPolicy(
+        str _policyId,
+        str _countryRegionId,
+        str _ticketClass,
+        int _eligibilityMonths,
+        real _ticketAmount,
+        boolean _isActive)
+    {
+        PRLAirTicketPolicyTable policy;
+        ttsbegin;
+        select firstonly forupdate policy where policy.PolicyId == _policyId;
+        if (policy.RecId)
+        {
+            policy.CountryRegionId = _countryRegionId;
+            policy.TicketClass = _ticketClass;
+            policy.EligibilityMonths = _eligibilityMonths;
+            policy.TicketAmount = _ticketAmount;
+            policy.IsActive = _isActive ? NoYes::Yes : NoYes::No;
+            policy.update();
+        }
+        else
+        {
+            policy.clear();
+            policy.PolicyId = _policyId;
+            policy.CountryRegionId = _countryRegionId;
+            policy.TicketClass = _ticketClass;
+            policy.EligibilityMonths = _eligibilityMonths;
+            policy.TicketAmount = _ticketAmount;
+            policy.IsActive = _isActive ? NoYes::Yes : NoYes::No;
+            policy.insert();
+        }
+        ttscommit;
+    }
+}

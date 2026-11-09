@@ -1,0 +1,81 @@
+public interface PRLPayrollLawStrategy
+{
+    public real statutoryDeduction(PRLCalcContext _ctx);
+    public real gratuity(PRLCalcContext _ctx);
+    public real endOfService(PRLCalcContext _ctx);
+}
+
+public class PRLPayrollLawStrategy_GCC implements PRLPayrollLawStrategy
+{
+    public real statutoryDeduction(PRLCalcContext _ctx)
+    {
+        return _ctx.getNumeric("BASICSALARY") * 0.05;
+    }
+
+    public real gratuity(PRLCalcContext _ctx)
+    {
+        return (new PRLFunctionProvider()).execute("TIER", this.tierArgs(_ctx), _ctx);
+    }
+
+    public real endOfService(PRLCalcContext _ctx)
+    {
+        real eosBase = this.gratuity(_ctx);
+        str terminationReason = _ctx.getText("TERMINATIONREASON");
+        if (terminationReason == "RESIGNATION" && _ctx.parmServiceYears() < 5)
+        {
+            eosBase *= 0.66;
+        }
+        return eosBase;
+    }
+
+    private List tierArgs(PRLCalcContext _ctx)
+    {
+        List args = new List(Types::Real);
+        args.addEnd(_ctx.parmServiceYears());
+        args.addEnd(_ctx.getNumeric("BASICSALARY") / 30);
+        return args;
+    }
+}
+
+public class PRLPayrollLawStrategy_EU implements PRLPayrollLawStrategy
+{
+    public real statutoryDeduction(PRLCalcContext _ctx)
+    {
+        real taxable = max(_ctx.getNumeric("GROSSPAY"), 0);
+        return taxable * 0.22;
+    }
+
+    public real gratuity(PRLCalcContext _ctx)
+    {
+        return 0;
+    }
+
+    public real endOfService(PRLCalcContext _ctx)
+    {
+        if (_ctx.getText("TERMINATIONREASON") == "REDUNDANCY")
+        {
+            return _ctx.getNumeric("BASICSALARY") * min(_ctx.parmServiceYears(), 12);
+        }
+        return 0;
+    }
+}
+
+public class PRLPayrollLawStrategyFactory
+{
+    public static PRLPayrollLawStrategy build(str _countryRegionId)
+    {
+        str country = strUpr(_countryRegionId);
+        switch (country)
+        {
+            case "AE":
+            case "SA":
+            case "QA":
+            case "KW":
+            case "BH":
+            case "OM":
+                return new PRLPayrollLawStrategy_GCC();
+            default:
+                return new PRLPayrollLawStrategy_EU();
+        }
+    }
+}

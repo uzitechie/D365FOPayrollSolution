@@ -1,0 +1,21 @@
+public class PRLAirTicketProcessFormController
+{
+    public static void seedPolicies()
+    {
+        (new PRLAirTicketService()).seedDefaultPolicies();
+        info("Default GCC air ticket policies seeded.");
+    }
+
+    public static void processRun(FormRun _formRun)
+    {
+        FormDataSource ticketDs = _formRun.dataSource(formDataSourceStr(PRLAirTicketProcessForm, PRLAirTicketTransactionTable_DS));
+        PRLAirTicketTransactionTable ticketTxn = ticketDs.cursor();
+        if (!ticketTxn.RunId)
+        {
+            throw error("RunId is required on the selected air ticket transaction.");
+        }
+        (new PRLAirTicketService()).generateRunAirTickets(ticketTxn.RunId);
+        info(strFmt("Air ticket generation completed for run %1.", ticketTxn.RunId));
+        ticketDs.research(true);
+    }
+}

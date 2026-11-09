@@ -1,0 +1,15 @@
+public class PRLLeaveProcessFormEventHandler
+{
+    [FormControlEventHandler(formControlStr(PRLLeaveProcessForm, SeedLeavePoliciesButton), FormControlEventType::Clicked)]
+    public static void SeedLeavePoliciesButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLLeaveProcessFormController::seedPolicies();
+        sender.formRun().dataSource(formDataSourceStr(PRLLeaveProcessForm, PRLLeavePolicyTable_DS)).research(true);
+    }
+
+    [FormControlEventHandler(formControlStr(PRLLeaveProcessForm, ApplyLeavesToRunButton), FormControlEventType::Clicked)]
+    public static void ApplyLeavesToRunButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLLeaveProcessFormController::applyToRun(sender.formRun());
+    }
+}

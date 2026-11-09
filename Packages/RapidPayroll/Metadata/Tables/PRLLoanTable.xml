@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLLoanTable">
+  <Label>Payroll loans</Label>
+  <PrimaryIndex>LoanIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="LoanId" Type="String" StringSize="40" Mandatory="Yes" />
+    <Field Name="EmployeeId" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="PrincipalAmount" Type="Real" Mandatory="Yes" />
+    <Field Name="OutstandingAmount" Type="Real" />
+    <Field Name="AnnualRate" Type="Real" />
+    <Field Name="TenureMonths" Type="Integer" />
+    <Field Name="InstallmentAmount" Type="Real" />
+    <Field Name="StartDate" Type="Date" />
+    <Field Name="Status" Type="String" StringSize="20" />
+  </Fields>
+  <Indexes>
+    <Index Name="LoanIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="LoanId" />
+    </Index>
+  </Indexes>
+</Table>

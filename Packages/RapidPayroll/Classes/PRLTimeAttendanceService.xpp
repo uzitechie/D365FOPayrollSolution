@@ -1,0 +1,34 @@
+public class PRLTimeAttendanceService
+{
+    public void rollupRunAttendance(str _runId)
+    {
+        PRLAttendanceTable attendance;
+        PRLPayrollEmployeeInputTable inputTable;
+
+        while select EmployeeId,
+            sum(ScheduledHours),
+            sum(HoursWorked),
+            sum(OvertimeHours15),
+            sum(OvertimeHours20),
+            sum(LeaveHours)
+            from attendance
+            group by attendance.EmployeeId
+            where attendance.RunId == _runId
+        {
+            ttsbegin;
+            select firstonly forupdate inputTable
+                where inputTable.RunId == _runId
+                   && inputTable.EmployeeId == attendance.EmployeeId;
+            if (inputTable.RecId)
+            {
+                inputTable.ScheduledHours = attendance.ScheduledHours;
+                inputTable.WorkedHours = attendance.HoursWorked;
+                inputTable.OvertimeHours15 = attendance.OvertimeHours15;
+                inputTable.OvertimeHours20 = attendance.OvertimeHours20;
+                inputTable.LeaveHours = max(inputTable.LeaveHours, attendance.LeaveHours);
+                inputTable.update();
+            }
+            ttscommit;
+        }
+    }
+}

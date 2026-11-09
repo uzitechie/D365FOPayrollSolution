@@ -1,0 +1,152 @@
+public class PRLFormulaRepository
+{
+    public static str buildKey(str _componentCode, str _countryRegionId, str _legalEntity, boolean _isExempt)
+    {
+        return strFmt("%1|%2|%3|%4",
+            strUpr(_componentCode),
+            strUpr(_countryRegionId),
+            strUpr(_legalEntity),
+            _isExempt ? "1" : "0");
+    }
+
+    public static void upsertFormula(PRLFormulaDefinitionContract _formula)
+    {
+        PRLFormulaTable formulaTable;
+        str formulaId = _formula.parmFormulaId();
+        if (!formulaId)
+        {
+            formulaId = PRLFormulaRepository::buildKey(
+                _formula.parmComponentCode(),
+                _formula.parmCountryRegionId(),
+                _formula.parmLegalEntity(),
+                _formula.parmIsExemptOnly());
+        }
+
+        ttsbegin;
+        select firstonly forupdate formulaTable
+            where formulaTable.FormulaId == formulaId;
+
+        if (formulaTable.RecId)
+        {
+            formulaTable.ComponentCode = _formula.parmComponentCode();
+            formulaTable.Expression = _formula.parmExpression();
+            formulaTable.CountryRegionId = _formula.parmCountryRegionId();
+            formulaTable.LegalEntity = _formula.parmLegalEntity();
+            formulaTable.IsExemptOnly = _formula.parmIsExemptOnly() ? NoYes::Yes : NoYes::No;
+            formulaTable.ValidFrom = _formula.parmValidFrom();
+            formulaTable.ValidTo = _formula.parmValidTo();
+            formulaTable.FormulaCurrency = _formula.parmFormulaCurrency();
+            formulaTable.update();
+        }
+        else
+        {
+            formulaTable.clear();
+            formulaTable.FormulaId = formulaId;
+            formulaTable.ComponentCode = _formula.parmComponentCode();
+            formulaTable.Expression = _formula.parmExpression();
+            formulaTable.CountryRegionId = _formula.parmCountryRegionId();
+            formulaTable.LegalEntity = _formula.parmLegalEntity();
+            formulaTable.IsExemptOnly = _formula.parmIsExemptOnly() ? NoYes::Yes : NoYes::No;
+            formulaTable.ValidFrom = _formula.parmValidFrom();
+            formulaTable.ValidTo = _formula.parmValidTo();
+            formulaTable.FormulaCurrency = _formula.parmFormulaCurrency();
+            formulaTable.insert();
+        }
+        ttscommit;
+    }
+
+    public static str getExpression(str _componentCode, PRLCalcContext _ctx)
+    {
+        PRLFormulaTable formulaTable;
+        date runDate = _ctx.parmPeriodTo() ? _ctx.parmPeriodTo() : systemDateGet();
+        NoYes exemptFilter = _ctx.parmIsExempt() ? NoYes::Yes : NoYes::No;
+
+        select firstonly formulaTable
+            order by formulaTable.LegalEntity desc, formulaTable.CountryRegionId desc, formulaTable.ValidFrom desc
+            where formulaTable.ComponentCode == _componentCode
+               && (formulaTable.CountryRegionId == _ctx.parmCountryRegionId() || formulaTable.CountryRegionId == "")
+               && (formulaTable.LegalEntity == _ctx.parmLegalEntity() || formulaTable.LegalEntity == "")
+               && formulaTable.IsExemptOnly == exemptFilter
+               && (formulaTable.ValidFrom == dateNull() || formulaTable.ValidFrom <= runDate)
+               && (formulaTable.ValidTo == dateNull() || formulaTable.ValidTo >= runDate);
+
+        return formulaTable.Expression;
+    }
+
+    public static void setExchangeRate(str _fromCurrency, str _toCurrency, real _rate)
+    {
+        PRLCurrencyRateTable rateTable;
+        str rateId = strFmt("%1>%2", strUpr(_fromCurrency), strUpr(_toCurrency));
+
+        ttsbegin;
+        select firstonly forupdate rateTable where rateTable.RateId == rateId;
+        if (rateTable.RecId)
+        {
+            rateTable.ExchangeRate = _rate;
+            if (!rateTable.ValidFrom)
+            {
+                rateTable.ValidFrom = systemDateGet();
+            }
+            rateTable.update();
+        }
+        else
+        {
+            rateTable.clear();
+            rateTable.RateId = rateId;
+            rateTable.FromCurrency = strUpr(_fromCurrency);
+            rateTable.ToCurrency = strUpr(_toCurrency);
+            rateTable.ExchangeRate = _rate;
+            rateTable.ValidFrom = systemDateGet();
+            rateTable.insert();
+        }
+        ttscommit;
+    }
+
+    public static real getExchangeRate(str _fromCurrency, str _toCurrency)
+    {
+        PRLCurrencyRateTable rateTable;
+        str fromCurrency = strUpr(_fromCurrency);
+        str toCurrency = strUpr(_toCurrency);
+        date runDate = systemDateGet();
+
+        if (fromCurrency == toCurrency)
+        {
+            return 1;
+        }
+
+        select firstonly rateTable
+            order by rateTable.ValidFrom desc
+            where rateTable.FromCurrency == fromCurrency
+               && rateTable.ToCurrency == toCurrency
+               && (rateTable.ValidFrom == dateNull() || rateTable.ValidFrom <= runDate)
+               && (rateTable.ValidTo == dateNull() || rateTable.ValidTo >= runDate);
+
+        return rateTable.ExchangeRate;
+    }
+
+    public static void seedDefaults()
+    {
+        PRLFormulaDefinitionContract formula;
+
+        formula = new PRLFormulaDefinitionContract();
+        formula.parmComponentCode("OVERTIME_PAY");
+        formula.parmExpression("IF(ISEXEMPT,0,OTHOURS15*HOURLYRATE*1.5 + OTHOURS20*HOURLYRATE*2)");
+        PRLFormulaRepository::upsertFormula(formula);
+
+        formula = new PRLFormulaDefinitionContract();
+        formula.parmComponentCode("LEAVE_DEDUCTION");
+        formula.parmExpression("PRORATE(BASICSALARY, LEAVEHOURS, SCHEDULEDHOURS)");
+        PRLFormulaRepository::upsertFormula(formula);
+
+        formula = new PRLFormulaDefinitionContract();
+        formula.parmComponentCode("GCC_GRATUITY");
+        formula.parmExpression("TIER(SERVICEYEARS, BASICSALARY/30)");
+        formula.parmCountryRegionId("AE");
+        PRLFormulaRepository::upsertFormula(formula);
+
+        formula = new PRLFormulaDefinitionContract();
+        formula.parmComponentCode("NET_PAY");
+        formula.parmExpression("GROSSPAY - TOTALDEDUCTIONS");
+        PRLFormulaRepository::upsertFormula(formula);
+    }
+}

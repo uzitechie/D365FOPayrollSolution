@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Payroll Formula Builder</title>
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; margin: 12px; }
+    .panel { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+    .tokens button { margin: 4px; padding: 4px 8px; }
+    textarea { width: 100%; min-height: 100px; font-family: Consolas, monospace; }
+    .row { display: flex; gap: 8px; margin-top: 8px; }
+    input, select { padding: 4px; }
+    .ok { color: #0a7f2e; }
+    .err { color: #b42318; }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <div><strong>Formula builder</strong></div>
+    <div class="tokens" id="tokenPanel"></div>
+    <textarea id="formulaText" placeholder="IF(ISEXEMPT,0,OTHOURS15*HOURLYRATE*1.5)"></textarea>
+    <div class="row">
+      <input id="componentCode" placeholder="Component code (e.g. OVERTIME_PAY)" />
+      <input id="countryCode" placeholder="Country (e.g. AE)" />
+      <input id="legalEntity" placeholder="Legal entity (optional)" />
+    </div>
+    <div class="row">
+      <button id="validateBtn">Validate</button>
+      <button id="previewBtn">Preview</button>
+      <button id="saveBtn">Save</button>
+      <span id="status"></span>
+    </div>
+  </div>
+  <script src="PRLFormulaBuilderControl.js"></script>
+</body>
+</html>

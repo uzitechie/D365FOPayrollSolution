@@ -1,0 +1,15 @@
+public final class PRLComponentType
+{
+    public const str Basic = "BASIC";
+    public const str Allowance = "ALLOWANCE";
+    public const str Deduction = "DEDUCTION";
+    public const str Overtime = "OVERTIME";
+    public const str Loan = "LOAN";
+    public const str Commission = "COMMISSION";
+    public const str Bonus = "BONUS";
+    public const str Gratuity = "GRATUITY";
+    public const str EndOfService = "EOS";
+    public const str Leave = "LEAVE";
+    public const str Travel = "TRAVEL";
+    public const str AdHoc = "ADHOC";
+}

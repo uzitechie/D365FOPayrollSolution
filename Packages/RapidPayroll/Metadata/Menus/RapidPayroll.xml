@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Menu Name="RapidPayroll">
+  <Label>Rapid Payroll</Label>
+  <MenuItemRef Name="RapidPayrollWorkspaceMenuItem" MenuItemType="Display" />
+  <MenuItemRef Name="RapidPayrollPayElementsMenuItem" MenuItemType="Display" />
+  <MenuItemRef Name="RapidPayrollFormulaBuilderMenuItem" MenuItemType="Display" />
+  <MenuItemRef Name="RapidPayrollLeaveProcessMenuItem" MenuItemType="Display" />
+  <MenuItemRef Name="RapidPayrollTimeAttendanceMenuItem" MenuItemType="Display" />
+  <MenuItemRef Name="RapidPayrollEOSProcessMenuItem" MenuItemType="Display" />
+  <MenuItemRef Name="RapidPayrollAirTicketProcessMenuItem" MenuItemType="Display" />
+  <MenuItemRef Name="RapidPayrollMonthlyProcessMenuItem" MenuItemType="Display" />
+</Menu>

@@ -1,0 +1,56 @@
+public class PRLPayrollWorkspaceFormController
+{
+    public static str currentRunId(FormRun _formRun)
+    {
+        FormDataSource runDs = _formRun.dataSource(formDataSourceStr(PRLPayrollWorkspaceForm, PRLPayrollRunTable_DS));
+        PRLPayrollRunTable runHeader = runDs.cursor();
+        if (!runHeader.RunId)
+        {
+            throw error("RunId is required on the selected payroll run header.");
+        }
+        return runHeader.RunId;
+    }
+
+    public static Query employeeQueryAll(FormRun _formRun)
+    {
+        return PRLPayrollRequestBuilder::buildEmployeeQuery(PRLPayrollWorkspaceFormController::currentRunId(_formRun));
+    }
+
+    public static Query employeeQueryFiltered(FormRun _formRun)
+    {
+        Query query = PRLPayrollWorkspaceFormController::employeeQueryAll(_formRun);
+        QueryRun queryRun = new QueryRun(query);
+        if (!queryRun.prompt())
+        {
+            throw error("Payroll process was cancelled.");
+        }
+        return queryRun.query();
+    }
+
+    public static void processPayrollInteractive(FormRun _formRun, boolean _filtered)
+    {
+        str runId = PRLPayrollWorkspaceFormController::currentRunId(_formRun);
+        Query query = _filtered
+            ? PRLPayrollWorkspaceFormController::employeeQueryFiltered(_formRun)
+            : PRLPayrollWorkspaceFormController::employeeQueryAll(_formRun);
+        PRLPayrollRunResultContract result = PRLPayrollRunExecutionService::runInteractive(runId, query);
+        info(strFmt("Payroll run %1 processed interactively. Total net amount = %2", result.parmRunId(), result.parmTotalNet()));
+        PRLPayrollWorkspaceFormController::refreshResults(_formRun);
+    }
+
+    public static void processPayrollBatch(FormRun _formRun, boolean _filtered)
+    {
+        str runId = PRLPayrollWorkspaceFormController::currentRunId(_formRun);
+        Query query = _filtered
+            ? PRLPayrollWorkspaceFormController::employeeQueryFiltered(_formRun)
+            : PRLPayrollWorkspaceFormController::employeeQueryAll(_formRun);
+        PRLPayrollRunExecutionService::runBatch(runId, query);
+        info(strFmt("Payroll run %1 was submitted to batch.", runId));
+    }
+
+    public static void refreshResults(FormRun _formRun)
+    {
+        _formRun.dataSource(formDataSourceStr(PRLPayrollWorkspaceForm, PRLPayrollRunLineTable_DS)).research(true);
+        _formRun.dataSource(formDataSourceStr(PRLPayrollWorkspaceForm, PRLPayrollRunTable_DS)).research(true);
+    }
+}

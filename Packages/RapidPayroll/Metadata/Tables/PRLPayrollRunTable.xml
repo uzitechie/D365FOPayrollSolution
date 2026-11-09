@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLPayrollRunTable">
+  <Label>Payroll run header</Label>
+  <PrimaryIndex>RunIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="RunId" Type="String" StringSize="40" Mandatory="Yes" />
+    <Field Name="LegalEntity" Type="String" StringSize="20" Mandatory="Yes" />
+    <Field Name="PayPeriodFrom" Type="Date" Mandatory="Yes" />
+    <Field Name="PayPeriodTo" Type="Date" Mandatory="Yes" />
+    <Field Name="PayoutCurrency" Type="String" StringSize="3" Mandatory="Yes" />
+    <Field Name="TotalGross" Type="Real" />
+    <Field Name="TotalDeduction" Type="Real" />
+    <Field Name="TotalNet" Type="Real" />
+    <Field Name="Status" Type="String" StringSize="20" />
+  </Fields>
+  <FieldGroups>
+    <FieldGroup Name="Overview">
+      <FieldRef Name="RunId" />
+      <FieldRef Name="LegalEntity" />
+      <FieldRef Name="PayPeriodFrom" />
+      <FieldRef Name="PayPeriodTo" />
+      <FieldRef Name="Status" />
+      <FieldRef Name="TotalNet" />
+    </FieldGroup>
+  </FieldGroups>
+  <Indexes>
+    <Index Name="RunIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="RunId" />
+    </Index>
+  </Indexes>
+</Table>

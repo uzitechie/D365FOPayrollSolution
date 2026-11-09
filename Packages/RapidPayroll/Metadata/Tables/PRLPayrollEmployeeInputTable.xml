@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLPayrollEmployeeInputTable">
+  <Label>Payroll employee inputs</Label>
+  <PrimaryIndex>InputIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="RunId" Type="String" StringSize="40" Mandatory="Yes" />
+    <Field Name="EmployeeId" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="LegalEntity" Type="String" StringSize="20" Mandatory="Yes" />
+    <Field Name="CountryRegionId" Type="String" StringSize="10" Mandatory="Yes" />
+    <Field Name="PayrollCurrency" Type="String" StringSize="3" Mandatory="Yes" />
+    <Field Name="EmploymentType" Type="String" StringSize="20" />
+    <Field Name="IsExempt" Type="Enum" EnumType="NoYes" />
+    <Field Name="BasicSalary" Type="Real" />
+    <Field Name="Commission" Type="Real" />
+    <Field Name="Bonus" Type="Real" />
+    <Field Name="TravelAllowance" Type="Real" />
+    <Field Name="AdHocAllowance" Type="Real" />
+    <Field Name="AdHocDeduction" Type="Real" />
+    <Field Name="ScheduledHours" Type="Real" />
+    <Field Name="WorkedHours" Type="Real" />
+    <Field Name="LeaveHours" Type="Real" />
+    <Field Name="OvertimeHours15" Type="Real" />
+    <Field Name="OvertimeHours20" Type="Real" />
+    <Field Name="ServiceYears" Type="Real" />
+    <Field Name="LoanOutstanding" Type="Real" />
+    <Field Name="LoanInstallment" Type="Real" />
+    <Field Name="TerminationReason" Type="String" StringSize="30" />
+  </Fields>
+  <Indexes>
+    <Index Name="InputIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="RunId" />
+      <FieldRef Name="EmployeeId" />
+    </Index>
+    <Index Name="RunLookupIdx" AllowDuplicates="Yes">
+      <FieldRef Name="RunId" />
+    </Index>
+  </Indexes>
+</Table>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLLeaveTransactionTable">
+  <Label>Payroll leave transactions</Label>
+  <PrimaryIndex>LeaveTxnIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="LeaveTxnId" Type="String" StringSize="50" Mandatory="Yes" />
+    <Field Name="RunId" Type="String" StringSize="40" />
+    <Field Name="EmployeeId" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="CountryRegionId" Type="String" StringSize="10" Mandatory="Yes" />
+    <Field Name="LeaveType" Type="String" StringSize="20" Mandatory="Yes" />
+    <Field Name="FromDate" Type="Date" Mandatory="Yes" />
+    <Field Name="ToDate" Type="Date" Mandatory="Yes" />
+    <Field Name="LeaveDays" Type="Real" />
+    <Field Name="LeaveHours" Type="Real" />
+    <Field Name="IsPaid" Type="Enum" EnumType="NoYes" />
+    <Field Name="Status" Type="String" StringSize="20" />
+  </Fields>
+  <Indexes>
+    <Index Name="LeaveTxnIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="LeaveTxnId" />
+    </Index>
+    <Index Name="LeaveRunEmployeeIdx" AllowDuplicates="Yes">
+      <FieldRef Name="RunId" />
+      <FieldRef Name="EmployeeId" />
+    </Index>
+  </Indexes>
+</Table>

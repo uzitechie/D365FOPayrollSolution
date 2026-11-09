@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Name="PRLEndOfServiceForm">
+  <Caption>End of service process (GCC)</Caption>
+  <DataSources>
+    <DataSource Name="PRLEOSSettlementTable_DS" Table="PRLEOSSettlementTable" />
+  </DataSources>
+  <Design>
+    <Control Type="ActionPane" Name="ActionPane">
+      <Control Type="Button" Name="GenerateEOSButton" Text="Generate EOS settlements by run" />
+    </Control>
+    <Control Type="Grid" Name="EOSGrid" DataSource="PRLEOSSettlementTable_DS">
+      <Control Type="String" DataField="SettlementId" />
+      <Control Type="String" DataField="RunId" />
+      <Control Type="String" DataField="EmployeeId" />
+      <Control Type="String" DataField="CountryRegionId" />
+      <Control Type="Real" DataField="ServiceYears" />
+      <Control Type="Real" DataField="BaseSalary" />
+      <Control Type="Real" DataField="GratuityAmount" />
+      <Control Type="Real" DataField="EOSAmount" />
+      <Control Type="Real" DataField="AirTicketAmount" />
+      <Control Type="Date" DataField="SettlementDate" />
+      <Control Type="String" DataField="Status" />
+    </Control>
+  </Design>
+</Form>

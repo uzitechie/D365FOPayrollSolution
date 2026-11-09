@@ -1,0 +1,52 @@
+public class PRLMonthlyPayrollProcessService
+{
+    PRLTimeAttendanceService attendanceService;
+    PRLLeaveProcessService leaveService;
+    PRLAirTicketService airTicketService;
+    PRLEndOfServiceService eosService;
+
+    public void new()
+    {
+        attendanceService = new PRLTimeAttendanceService();
+        leaveService = new PRLLeaveProcessService();
+        airTicketService = new PRLAirTicketService();
+        eosService = new PRLEndOfServiceService();
+    }
+
+    [SysEntryPointAttribute]
+    public void runMonthlyProcess(str _processId)
+    {
+        PRLMonthlyPayrollProcessTable processTable;
+        PRLPayrollRunRequestContract request;
+        PRLPayrollRunResultContract result;
+
+        select firstonly forupdate processTable where processTable.ProcessId == _processId;
+        if (!processTable.RecId)
+        {
+            throw error(strFmt("Monthly payroll process %1 was not found.", _processId));
+        }
+
+        ttsbegin;
+        processTable.Status = "Processing";
+        processTable.update();
+        ttscommit;
+
+        leaveService.seedDefaultPolicies();
+        airTicketService.seedDefaultPolicies();
+        attendanceService.rollupRunAttendance(processTable.RunId);
+        leaveService.applyLeaveToRun(processTable.RunId);
+        airTicketService.generateRunAirTickets(processTable.RunId);
+
+        request = PRLPayrollRequestBuilder::buildFromRunId(processTable.RunId);
+        result = PRLPayrollProcessService::processPayroll(request);
+        eosService.processRunSettlements(processTable.RunId);
+
+        ttsbegin;
+        select firstonly forupdate processTable where processTable.ProcessId == _processId;
+        processTable.ProcessDate = systemDateGet();
+        processTable.Status = "Completed";
+        processTable.Notes = strFmt("Processed run %1. Total net %2", result.parmRunId(), result.parmTotalNet());
+        processTable.update();
+        ttscommit;
+    }
+}

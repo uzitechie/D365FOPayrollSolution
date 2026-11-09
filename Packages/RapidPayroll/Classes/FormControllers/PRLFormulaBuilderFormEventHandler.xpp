@@ -1,0 +1,27 @@
+public class PRLFormulaBuilderFormEventHandler
+{
+    [FormControlEventHandler(formControlStr(PRLFormulaBuilderForm, ValidateButton), FormControlEventType::Clicked)]
+    public static void ValidateButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLFormulaBuilderFormController::validateCurrentFormula(sender.formRun());
+    }
+
+    [FormControlEventHandler(formControlStr(PRLFormulaBuilderForm, PreviewButton), FormControlEventType::Clicked)]
+    public static void PreviewButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLFormulaBuilderFormController::previewCurrentFormula(sender.formRun());
+    }
+
+    [FormControlEventHandler(formControlStr(PRLFormulaBuilderForm, SaveFormulaButton), FormControlEventType::Clicked)]
+    public static void SaveFormulaButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLFormulaBuilderFormController::saveCurrentFormula(sender.formRun());
+    }
+
+    [FormControlEventHandler(formControlStr(PRLFormulaBuilderForm, RefreshFunctionsButton), FormControlEventType::Clicked)]
+    public static void RefreshFunctionsButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        str catalog = PRLFormulaBuilderFormController::functionCatalogText();
+        info(strFmt("Functions: %1", catalog));
+    }
+}

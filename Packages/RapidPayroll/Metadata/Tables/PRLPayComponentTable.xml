@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLPayComponentTable">
+  <Label>Payroll pay components</Label>
+  <PrimaryIndex>ComponentIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="ComponentCode" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="Description" Type="String" StringSize="120" />
+    <Field Name="ComponentType" Type="String" StringSize="20" Mandatory="Yes" />
+    <Field Name="FormulaId" Type="String" StringSize="60" />
+    <Field Name="DefaultValue" Type="Real" />
+    <Field Name="IsActive" Type="Enum" EnumType="NoYes" />
+  </Fields>
+  <Indexes>
+    <Index Name="ComponentIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="ComponentCode" />
+    </Index>
+  </Indexes>
+</Table>

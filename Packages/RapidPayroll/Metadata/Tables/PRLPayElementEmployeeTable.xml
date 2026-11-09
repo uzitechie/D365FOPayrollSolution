@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLPayElementEmployeeTable">
+  <Label>Payroll pay element employees</Label>
+  <PrimaryIndex>PayElementEmployeeIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="ComponentCode" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="EmployeeId" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="IsActive" Type="Enum" EnumType="NoYes" />
+    <Field Name="ValidFrom" Type="Date" />
+    <Field Name="ValidTo" Type="Date" />
+    <Field Name="OverrideAmount" Type="Real" />
+  </Fields>
+  <Indexes>
+    <Index Name="PayElementEmployeeIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="ComponentCode" />
+      <FieldRef Name="EmployeeId" />
+    </Index>
+    <Index Name="EmployeeLookupIdx" AllowDuplicates="Yes">
+      <FieldRef Name="EmployeeId" />
+    </Index>
+  </Indexes>
+</Table>

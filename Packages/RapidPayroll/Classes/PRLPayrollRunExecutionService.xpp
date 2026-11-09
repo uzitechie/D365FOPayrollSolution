@@ -1,0 +1,22 @@
+public class PRLPayrollRunExecutionService
+{
+    [SysEntryPointAttribute]
+    public static PRLPayrollRunResultContract runInteractive(str _runId, Query _employeeQuery = null)
+    {
+        PRLPayrollRunRequestContract request = PRLPayrollRequestBuilder::buildFromRunIdAndQuery(_runId, _employeeQuery);
+        return PRLPayrollProcessService::processPayroll(request);
+    }
+
+    [SysEntryPointAttribute]
+    public static void runBatch(str _runId, Query _employeeQuery = null)
+    {
+        PRLPayrollRunBatch batch = new PRLPayrollRunBatch();
+        batch.parmRunId(_runId);
+        batch.parmEmployeeQuery(_employeeQuery ? _employeeQuery : PRLPayrollRequestBuilder::buildEmployeeQuery(_runId));
+        batch.batchInfo().parmCaption(strFmt("Rapid payroll run %1", _runId));
+        if (batch.prompt())
+        {
+            batch.runOperation();
+        }
+    }
+}

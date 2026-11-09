@@ -1,0 +1,104 @@
+public class PRLCalcContext
+{
+    Map numericValues;
+    Map textValues;
+    str countryRegionId;
+    str legalEntity;
+    str sourceCurrency;
+    str payoutCurrency;
+    date periodFrom;
+    date periodTo;
+    boolean isExempt;
+    real serviceYears;
+
+    public void new()
+    {
+        numericValues = new Map(Types::String, Types::Real);
+        textValues = new Map(Types::String, Types::String);
+    }
+
+    public void setNumeric(str _name, real _value)
+    {
+        numericValues.insert(strUpr(_name), _value);
+    }
+
+    public real getNumeric(str _name)
+    {
+        real value = 0;
+        str key = strUpr(_name);
+        if (numericValues.exists(key))
+        {
+            value = any2Real(numericValues.lookup(key));
+        }
+        return value;
+    }
+
+    public boolean hasNumeric(str _name)
+    {
+        return numericValues.exists(strUpr(_name));
+    }
+
+    public void setText(str _name, str _value)
+    {
+        textValues.insert(strUpr(_name), _value);
+    }
+
+    public str getText(str _name)
+    {
+        str value = "";
+        str key = strUpr(_name);
+        if (textValues.exists(key))
+        {
+            value = any2Str(textValues.lookup(key));
+        }
+        return value;
+    }
+
+    public str parmCountryRegionId(str _countryRegionId = countryRegionId)
+    {
+        countryRegionId = _countryRegionId;
+        return countryRegionId;
+    }
+
+    public str parmLegalEntity(str _legalEntity = legalEntity)
+    {
+        legalEntity = _legalEntity;
+        return legalEntity;
+    }
+
+    public str parmSourceCurrency(str _sourceCurrency = sourceCurrency)
+    {
+        sourceCurrency = _sourceCurrency;
+        return sourceCurrency;
+    }
+
+    public str parmPayoutCurrency(str _payoutCurrency = payoutCurrency)
+    {
+        payoutCurrency = _payoutCurrency;
+        return payoutCurrency;
+    }
+
+    public date parmPeriodFrom(date _periodFrom = periodFrom)
+    {
+        periodFrom = _periodFrom;
+        return periodFrom;
+    }
+
+    public date parmPeriodTo(date _periodTo = periodTo)
+    {
+        periodTo = _periodTo;
+        return periodTo;
+    }
+
+    public boolean parmIsExempt(boolean _isExempt = isExempt)
+    {
+        isExempt = _isExempt;
+        return isExempt;
+    }
+
+    public real parmServiceYears(real _serviceYears = serviceYears)
+    {
+        serviceYears = _serviceYears;
+        return serviceYears;
+    }
+}

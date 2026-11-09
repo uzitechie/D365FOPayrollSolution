@@ -1,0 +1,8 @@
+public class PRLPayElementsFormEventHandler
+{
+    [FormControlEventHandler(formControlStr(PRLPayElementsForm, RefreshPayElementLinksButton), FormControlEventType::Clicked)]
+    public static void RefreshPayElementLinksButton_OnClicked(FormControl sender, FormControlEventArgs e)
+    {
+        PRLPayElementsFormController::refreshLinks(sender.formRun());
+    }
+}

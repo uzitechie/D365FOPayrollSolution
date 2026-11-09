@@ -1,0 +1,76 @@
+[DataContract]
+public class PRLFormulaDefinitionContract
+{
+    str formulaId;
+    str componentCode;
+    str expression;
+    str countryRegionId;
+    str legalEntity;
+    boolean isExemptOnly;
+    date validFrom;
+    date validTo;
+    str formulaCurrency;
+
+    [DataMember("formulaId")]
+    public str parmFormulaId(str _formulaId = formulaId)
+    {
+        formulaId = _formulaId;
+        return formulaId;
+    }
+
+    [DataMember("componentCode")]
+    public str parmComponentCode(str _componentCode = componentCode)
+    {
+        componentCode = _componentCode;
+        return componentCode;
+    }
+
+    [DataMember("expression")]
+    public str parmExpression(str _expression = expression)
+    {
+        expression = _expression;
+        return expression;
+    }
+
+    [DataMember("countryRegionId")]
+    public str parmCountryRegionId(str _countryRegionId = countryRegionId)
+    {
+        countryRegionId = _countryRegionId;
+        return countryRegionId;
+    }
+
+    [DataMember("legalEntity")]
+    public str parmLegalEntity(str _legalEntity = legalEntity)
+    {
+        legalEntity = _legalEntity;
+        return legalEntity;
+    }
+
+    [DataMember("isExemptOnly")]
+    public boolean parmIsExemptOnly(boolean _isExemptOnly = isExemptOnly)
+    {
+        isExemptOnly = _isExemptOnly;
+        return isExemptOnly;
+    }
+
+    [DataMember("validFrom")]
+    public date parmValidFrom(date _validFrom = validFrom)
+    {
+        validFrom = _validFrom;
+        return validFrom;
+    }
+
+    [DataMember("validTo")]
+    public date parmValidTo(date _validTo = validTo)
+    {
+        validTo = _validTo;
+        return validTo;
+    }
+
+    [DataMember("formulaCurrency")]
+    public str parmFormulaCurrency(str _formulaCurrency = formulaCurrency)
+    {
+        formulaCurrency = _formulaCurrency;
+        return formulaCurrency;
+    }
+}

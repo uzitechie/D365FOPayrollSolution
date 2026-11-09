@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLAirTicketTransactionTable">
+  <Label>Payroll air ticket transactions</Label>
+  <PrimaryIndex>AirTicketTxnIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="AirTicketTxnId" Type="String" StringSize="60" Mandatory="Yes" />
+    <Field Name="RunId" Type="String" StringSize="40" />
+    <Field Name="EmployeeId" Type="String" StringSize="30" Mandatory="Yes" />
+    <Field Name="CountryRegionId" Type="String" StringSize="10" Mandatory="Yes" />
+    <Field Name="TicketAmount" Type="Real" />
+    <Field Name="TravelDate" Type="Date" />
+    <Field Name="Status" Type="String" StringSize="20" />
+  </Fields>
+  <Indexes>
+    <Index Name="AirTicketTxnIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="AirTicketTxnId" />
+    </Index>
+    <Index Name="AirTicketRunEmployeeIdx" AllowDuplicates="Yes">
+      <FieldRef Name="RunId" />
+      <FieldRef Name="EmployeeId" />
+    </Index>
+  </Indexes>
+</Table>

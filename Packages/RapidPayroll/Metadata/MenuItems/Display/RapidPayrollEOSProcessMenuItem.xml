@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DisplayMenuItem Name="RapidPayrollEOSProcessMenuItem">
+  <Label>End of service process</Label>
+  <ObjectType>Form</ObjectType>
+  <Object>PRLEndOfServiceForm</Object>
+  <NeedsRecord>No</NeedsRecord>
+  <RunOn>Called from</RunOn>
+</DisplayMenuItem>

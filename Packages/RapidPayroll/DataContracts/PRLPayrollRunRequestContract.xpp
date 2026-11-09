@@ -1,0 +1,62 @@
+[DataContract]
+public class PRLPayrollRunRequestContract
+{
+    str runId;
+    str legalEntity;
+    date payPeriodFrom;
+    date payPeriodTo;
+    str payoutCurrency;
+    List employees;
+    List formulaDefinitions;
+
+    [DataMember("runId")]
+    public str parmRunId(str _runId = runId)
+    {
+        runId = _runId;
+        return runId;
+    }
+
+    [DataMember("legalEntity")]
+    public str parmLegalEntity(str _legalEntity = legalEntity)
+    {
+        legalEntity = _legalEntity;
+        return legalEntity;
+    }
+
+    [DataMember("payPeriodFrom")]
+    public date parmPayPeriodFrom(date _payPeriodFrom = payPeriodFrom)
+    {
+        payPeriodFrom = _payPeriodFrom;
+        return payPeriodFrom;
+    }
+
+    [DataMember("payPeriodTo")]
+    public date parmPayPeriodTo(date _payPeriodTo = payPeriodTo)
+    {
+        payPeriodTo = _payPeriodTo;
+        return payPeriodTo;
+    }
+
+    [DataMember("payoutCurrency")]
+    public str parmPayoutCurrency(str _payoutCurrency = payoutCurrency)
+    {
+        payoutCurrency = _payoutCurrency;
+        return payoutCurrency;
+    }
+
+    [DataMember("employees"),
+     AifCollectionType("employees", Types::Class, classStr(PRLEmployeePayrollInputContract))]
+    public List parmEmployees(List _employees = employees)
+    {
+        employees = _employees;
+        return employees;
+    }
+
+    [DataMember("formulaDefinitions"),
+     AifCollectionType("formulaDefinitions", Types::Class, classStr(PRLFormulaDefinitionContract))]
+    public List parmFormulaDefinitions(List _formulaDefinitions = formulaDefinitions)
+    {
+        formulaDefinitions = _formulaDefinitions;
+        return formulaDefinitions;
+    }
+}

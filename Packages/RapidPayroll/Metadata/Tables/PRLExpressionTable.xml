@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Table Name="PRLExpressionTable">
+  <Label>Payroll formula expressions</Label>
+  <PrimaryIndex>ExpressionIdx</PrimaryIndex>
+  <Fields>
+    <Field Name="ExpressionId" Type="String" StringSize="60" Mandatory="Yes" />
+    <Field Name="FormulaId" Type="String" StringSize="60" Mandatory="Yes" />
+    <Field Name="ExpressionCode" Type="String" StringSize="30" />
+    <Field Name="ExpressionText" Type="String" StringSize="1000" Mandatory="Yes" />
+    <Field Name="SequenceNo" Type="Integer" />
+    <Field Name="IsActive" Type="Enum" EnumType="NoYes" />
+  </Fields>
+  <Indexes>
+    <Index Name="ExpressionIdx" AllowDuplicates="No" AlternateKey="Yes">
+      <FieldRef Name="ExpressionId" />
+    </Index>
+    <Index Name="FormulaLookupIdx" AllowDuplicates="Yes">
+      <FieldRef Name="FormulaId" />
+      <FieldRef Name="SequenceNo" />
+    </Index>
+  </Indexes>
+</Table>

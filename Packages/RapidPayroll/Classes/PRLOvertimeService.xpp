@@ -1,0 +1,14 @@
+public class PRLOvertimeService
+{
+    public real calculateSplitScaleOvertime(real _hourlyRate, real _otHours15, real _otHours20, real _tier1Hours, real _tier1Multiplier, real _tier2Multiplier)
+    {
+        real tier1HoursApplied = min(_otHours15 + _otHours20, _tier1Hours);
+        real tier2HoursApplied = max((_otHours15 + _otHours20) - _tier1Hours, 0);
+        return (_hourlyRate * tier1HoursApplied * _tier1Multiplier) + (_hourlyRate * tier2HoursApplied * _tier2Multiplier);
+    }
+
+    public real calculateBackdatedOvertimeDelta(real _oldRate, real _newRate, real _backdatedHours, real _multiplier)
+    {
+        return (_newRate - _oldRate) * _backdatedHours * _multiplier;
+    }
+}

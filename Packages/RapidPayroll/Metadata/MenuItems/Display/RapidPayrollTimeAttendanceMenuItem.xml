@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DisplayMenuItem Name="RapidPayrollTimeAttendanceMenuItem">
+  <Label>Time and attendance process</Label>
+  <ObjectType>Form</ObjectType>
+  <Object>PRLTimeAttendanceForm</Object>
+  <NeedsRecord>No</NeedsRecord>
+  <RunOn>Called from</RunOn>
+</DisplayMenuItem>

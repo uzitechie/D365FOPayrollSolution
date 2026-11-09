@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Form Name="PRLLeaveProcessForm">
+  <Caption>Leave process</Caption>
+  <DataSources>
+    <DataSource Name="PRLLeavePolicyTable_DS" Table="PRLLeavePolicyTable" />
+    <DataSource Name="PRLLeaveTransactionTable_DS" Table="PRLLeaveTransactionTable" />
+  </DataSources>
+  <Design>
+    <Control Type="ActionPane" Name="ActionPane">
+      <Control Type="Button" Name="SeedLeavePoliciesButton" Text="Seed leave policies" />
+      <Control Type="Button" Name="ApplyLeavesToRunButton" Text="Apply leaves to run" />
+    </Control>
+    <Control Type="Tab" Name="MainTab">
+      <Control Type="TabPage" Name="LeavePolicyTab" Text="Leave policy">
+        <Control Type="Grid" Name="LeavePolicyGrid" DataSource="PRLLeavePolicyTable_DS">
+          <Control Type="String" DataField="PolicyId" />
+          <Control Type="String" DataField="CountryRegionId" />
+          <Control Type="String" DataField="LeaveType" />
+          <Control Type="Real" DataField="AnnualEntitlementDays" />
+          <Control Type="Real" DataField="MonthlyAccrualDays" />
+          <Control Type="Real" DataField="CarryForwardCapDays" />
+          <Control Type="Enum" DataField="IsActive" />
+        </Control>
+      </Control>
+      <Control Type="TabPage" Name="LeaveTransactionsTab" Text="Leave transactions">
+        <Control Type="Grid" Name="LeaveTxnGrid" DataSource="PRLLeaveTransactionTable_DS">
+          <Control Type="String" DataField="LeaveTxnId" />
+          <Control Type="String" DataField="RunId" />
+          <Control Type="String" DataField="EmployeeId" />
+          <Control Type="String" DataField="CountryRegionId" />
+          <Control Type="Date" DataField="FromDate" />
+          <Control Type="Date" DataField="ToDate" />
+          <Control Type="Real" DataField="LeaveDays" />
+          <Control Type="Real" DataField="LeaveHours" />
+          <Control Type="Enum" DataField="IsPaid" />
+          <Control Type="String" DataField="Status" />
+        </Control>
+      </Control>
+    </Control>
+  </Design>
+</Form>

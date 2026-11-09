@@ -1,0 +1,85 @@
+public class PRLPayrollRunDemo
+{
+    public static void main(Args _args)
+    {
+        PRLPayrollRunRequestContract request = new PRLPayrollRunRequestContract();
+        List employees = new List(Types::Class);
+        PRLEmployeePayrollInputContract fullTime = new PRLEmployeePayrollInputContract();
+        PRLEmployeePayrollInputContract partTime = new PRLEmployeePayrollInputContract();
+        PRLPayrollRunResultContract result;
+        ListEnumerator lines;
+        PRLPayrollResultContract line;
+
+        PRLFormulaRepository::setExchangeRate("AED", "USD", 0.27225);
+        PRLFormulaRepository::setExchangeRate("EUR", "USD", 1.08);
+        PRLFormulaRepository::seedDefaults();
+
+        fullTime.parmEmployeeId("E1001");
+        fullTime.parmLegalEntity("USMF");
+        fullTime.parmCountryRegionId("AE");
+        fullTime.parmPayrollCurrency("AED");
+        fullTime.parmEmploymentType("FULLTIME");
+        fullTime.parmIsExempt(false);
+        fullTime.parmBasicSalary(18000);
+        fullTime.parmCommission(1500);
+        fullTime.parmBonus(1000);
+        fullTime.parmTravelAllowance(500);
+        fullTime.parmAdHocAllowance(300);
+        fullTime.parmAdHocDeduction(120);
+        fullTime.parmScheduledHours(160);
+        fullTime.parmWorkedHours(172);
+        fullTime.parmOvertimeHours15(8);
+        fullTime.parmOvertimeHours20(4);
+        fullTime.parmLeaveHours(4);
+        fullTime.parmServiceYears(7.5);
+        fullTime.parmLoanOutstanding(10000);
+        fullTime.parmLoanInstallment(850);
+        fullTime.parmTerminationReason("");
+
+        partTime.parmEmployeeId("E2004");
+        partTime.parmLegalEntity("USMF");
+        partTime.parmCountryRegionId("DE");
+        partTime.parmPayrollCurrency("EUR");
+        partTime.parmEmploymentType("PARTTIME");
+        partTime.parmIsExempt(false);
+        partTime.parmBasicSalary(3500);
+        partTime.parmCommission(200);
+        partTime.parmBonus(0);
+        partTime.parmTravelAllowance(100);
+        partTime.parmAdHocAllowance(0);
+        partTime.parmAdHocDeduction(40);
+        partTime.parmScheduledHours(80);
+        partTime.parmWorkedHours(88);
+        partTime.parmOvertimeHours15(6);
+        partTime.parmOvertimeHours20(2);
+        partTime.parmLeaveHours(3);
+        partTime.parmServiceYears(2.3);
+        partTime.parmLoanOutstanding(0);
+        partTime.parmLoanInstallment(0);
+        partTime.parmTerminationReason("");
+
+        employees.addEnd(fullTime);
+        employees.addEnd(partTime);
+
+        request.parmRunId(strFmt("RUN-%1", date2Str(systemDateGet(), 123, 2, DateDay::Digits2, DateSeparator::None, DateMonth::Digits2, DateSeparator::None, DateYear::Digits4)));
+        request.parmLegalEntity("USMF");
+        request.parmPayPeriodFrom(mkDate(1, 11, year(systemDateGet())));
+        request.parmPayPeriodTo(mkDate(30, 11, year(systemDateGet())));
+        request.parmPayoutCurrency("USD");
+        request.parmEmployees(employees);
+
+        result = PRLPayrollWorkspaceController::runPayrollSingleClick(request);
+
+        info(strFmt("Run %1 completed. Total net: %2", result.parmRunId(), result.parmTotalNet()));
+        lines = result.parmResultLines().getEnumerator();
+        while (lines.moveNext())
+        {
+            line = lines.current();
+            info(strFmt("%1 Net=%2 Gross=%3 Deductions=%4",
+                line.parmEmployeeId(),
+                line.parmNetPay(),
+                line.parmGrossPay(),
+                line.parmTotalDeductions()));
+        }
+    }
+}

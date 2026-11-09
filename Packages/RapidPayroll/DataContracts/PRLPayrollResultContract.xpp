@@ -1,0 +1,108 @@
+[DataContract]
+public class PRLPayrollResultContract
+{
+    str employeeId;
+    str payrollCurrency;
+    real grossPay;
+    real totalDeductions;
+    real netPay;
+    real overtimePay;
+    real gratuityPay;
+    real endOfServicePay;
+    real loanDeduction;
+    real leaveDeduction;
+    real airTicketBenefit;
+    str countryRegionId;
+    str legalEntity;
+
+    [DataMember("employeeId")]
+    public str parmEmployeeId(str _employeeId = employeeId)
+    {
+        employeeId = _employeeId;
+        return employeeId;
+    }
+
+    [DataMember("payrollCurrency")]
+    public str parmPayrollCurrency(str _payrollCurrency = payrollCurrency)
+    {
+        payrollCurrency = _payrollCurrency;
+        return payrollCurrency;
+    }
+
+    [DataMember("grossPay")]
+    public real parmGrossPay(real _grossPay = grossPay)
+    {
+        grossPay = _grossPay;
+        return grossPay;
+    }
+
+    [DataMember("totalDeductions")]
+    public real parmTotalDeductions(real _totalDeductions = totalDeductions)
+    {
+        totalDeductions = _totalDeductions;
+        return totalDeductions;
+    }
+
+    [DataMember("netPay")]
+    public real parmNetPay(real _netPay = netPay)
+    {
+        netPay = _netPay;
+        return netPay;
+    }
+
+    [DataMember("overtimePay")]
+    public real parmOvertimePay(real _overtimePay = overtimePay)
+    {
+        overtimePay = _overtimePay;
+        return overtimePay;
+    }
+
+    [DataMember("gratuityPay")]
+    public real parmGratuityPay(real _gratuityPay = gratuityPay)
+    {
+        gratuityPay = _gratuityPay;
+        return gratuityPay;
+    }
+
+    [DataMember("endOfServicePay")]
+    public real parmEndOfServicePay(real _endOfServicePay = endOfServicePay)
+    {
+        endOfServicePay = _endOfServicePay;
+        return endOfServicePay;
+    }
+
+    [DataMember("loanDeduction")]
+    public real parmLoanDeduction(real _loanDeduction = loanDeduction)
+    {
+        loanDeduction = _loanDeduction;
+        return loanDeduction;
+    }
+
+    [DataMember("leaveDeduction")]
+    public real parmLeaveDeduction(real _leaveDeduction = leaveDeduction)
+    {
+        leaveDeduction = _leaveDeduction;
+        return leaveDeduction;
+    }
+
+    [DataMember("airTicketBenefit")]
+    public real parmAirTicketBenefit(real _airTicketBenefit = airTicketBenefit)
+    {
+        airTicketBenefit = _airTicketBenefit;
+        return airTicketBenefit;
+    }
+
+    [DataMember("countryRegionId")]
+    public str parmCountryRegionId(str _countryRegionId = countryRegionId)
+    {
+        countryRegionId = _countryRegionId;
+        return countryRegionId;
+    }
+
+    [DataMember("legalEntity")]
+    public str parmLegalEntity(str _legalEntity = legalEntity)
+    {
+        legalEntity = _legalEntity;
+        return legalEntity;
+    }
+}

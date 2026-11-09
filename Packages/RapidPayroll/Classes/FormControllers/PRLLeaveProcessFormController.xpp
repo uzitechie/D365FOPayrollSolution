@@ -1,0 +1,20 @@
+public class PRLLeaveProcessFormController
+{
+    public static void seedPolicies()
+    {
+        (new PRLLeaveProcessService()).seedDefaultPolicies();
+        info("Default GCC and EU leave policies seeded.");
+    }
+
+    public static void applyToRun(FormRun _formRun)
+    {
+        FormDataSource leaveTxnDs = _formRun.dataSource(formDataSourceStr(PRLLeaveProcessForm, PRLLeaveTransactionTable_DS));
+        PRLLeaveTransactionTable leaveTxn = leaveTxnDs.cursor();
+        if (!leaveTxn.RunId)
+        {
+            throw error("RunId is required on the selected leave transaction.");
+        }
+        (new PRLLeaveProcessService()).applyLeaveToRun(leaveTxn.RunId);
+        info(strFmt("Leave transactions were applied to payroll run %1.", leaveTxn.RunId));
+    }
+}
